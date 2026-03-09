@@ -1,0 +1,141 @@
+<div class="tab-pane fade show active" id="tab-maturity" data-save-key="stage1-maturity">
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-bar-chart-steps me-2"></i> AI 성숙도 진단 (4대 영역)
+        </div>
+        <div class="card-body">
+            <form id="maturityForm">
+                <div class="row g-4">
+                    <!-- 전략 및 비전 -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">전략 및 비전</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">AI 비전 및 목표의 명확성</label>
+                                    <input type="range" class="form-range" id="s1_vision" min="1" max="5" value="3">
+                                    <div class="d-flex justify-content-between small text-muted">
+                                        <span>1:초기</span><span>3:정의됨</span><span>5:최적화</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI 투자 및 예산 관리 체계</label>
+                                    <input type="range" class="form-range" id="s1_investment" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI 활용 사례 포트폴리오 관리</label>
+                                    <input type="range" class="form-range" id="s1_portfolio" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI ROI 측정 체계</label>
+                                    <input type="range" class="form-range" id="s1_roi" min="1" max="5" value="3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 조직 및 역량 -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">조직 및 역량</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">AI 전담 조직 및 역할 정의</label>
+                                    <input type="range" class="form-range" id="s1_org" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI 인력 확보 및 역량 수준</label>
+                                    <input type="range" class="form-range" id="s1_talent" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI 교육 및 역량 개발 프로그램</label>
+                                    <input type="range" class="form-range" id="s1_training" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">변화 관리 및 AI 문화</label>
+                                    <input type="range" class="form-range" id="s1_culture" min="1" max="5" value="3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 데이터 및 기술 -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-warning text-dark">데이터 및 기술</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">데이터 인프라 및 접근성</label>
+                                    <input type="range" class="form-range" id="s1_infra" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">데이터 품질 및 거버넌스</label>
+                                    <input type="range" class="form-range" id="s1_quality" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">MLOps 플랫폼 활용 수준</label>
+                                    <input type="range" class="form-range" id="s1_mlops" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">클라우드 활용 및 확장성</label>
+                                    <input type="range" class="form-range" id="s1_cloud" min="1" max="5" value="3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 프로세스 및 거버넌스 -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-danger text-white">프로세스 및 거버넌스</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">AI 개발 방법론 표준화</label>
+                                    <input type="range" class="form-range" id="s1_method" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">모델 검증 및 배포 승인 절차</label>
+                                    <input type="range" class="form-range" id="s1_validation" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">AI 윤리 및 리스크 관리</label>
+                                    <input type="range" class="form-range" id="s1_ethics" min="1" max="5" value="3">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">모니터링 및 운영 체계</label>
+                                    <input type="range" class="form-range" id="s1_monitoring" min="1" max="5" value="3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="saveMaturityAssessment()">
+                        <i class="bi bi-check-lg me-2"></i>성숙도 진단 저장
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-lg ms-2"
+                        onclick="analyzeWithAI('maturity')">
+                        <i class="bi bi-robot me-2"></i>AI 분석 요청
+                    </button>
+                </div>
+            </form>
+
+            <!-- 진단 결과 표시 영역 -->
+            <div id="maturityResult" class="mt-4" style="display:none;">
+                <hr>
+                <h5><i class="bi bi-graph-up me-2"></i>진단 결과</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <canvas id="maturityRadarChart"></canvas>
+                    </div>
+                    <div class="col-md-6" id="maturityScoreDetails">
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 분석 결과 표시 영역 -->
+            <div id="maturityAnalysisResult" class="mt-4" style="display:none;"></div>
+        </div>
+    </div>
+</div>

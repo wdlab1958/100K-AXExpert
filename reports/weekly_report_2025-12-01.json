@@ -1,0 +1,28 @@
+{
+  "report_type": "weekly",
+  "report_data": {
+    "period": {
+      "start_date": "2025-12-01",
+      "end_date": "2025-12-07"
+    },
+    "summary": {
+      "total_events": 3,
+      "total_queries": 0,
+      "online_llm_calls": 0,
+      "security_warnings": 0,
+      "blocked_transmissions": 0,
+      "average_daily_queries": 0
+    },
+    "daily_breakdown": {
+      "2025-12-05": {
+        "total_events": 3,
+        "total_queries": 0,
+        "online_llm_calls": 0,
+        "security_warnings": 0
+      }
+    },
+    "alerts": [],
+    "generated_at": "2025-12-05T09:03:21.514900"
+  },
+  "saved_at": "2025-12-05T09:03:24.259247"
+}

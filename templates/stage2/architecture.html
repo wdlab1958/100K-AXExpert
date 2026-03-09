@@ -1,0 +1,91 @@
+<div class="tab-pane fade" id="tab-architecture" data-save-key="stage2-architecture">
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-diagram-3 me-2"></i> 기술 및 아키텍처 설계
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h6>데이터 아키텍처</h6>
+                    <div class="mb-3">
+                        <label class="form-label">데이터 저장소</label>
+                        <select class="form-select" id="arch_storage">
+                            <option value="datalake">Data Lake</option>
+                            <option value="warehouse">Data Warehouse</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">데이터 파이프라인</label>
+                        <select class="form-select" id="arch_pipeline">
+                            <option value="batch">Batch Processing</option>
+                            <option value="streaming">Real-time Streaming</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6>ML 파이프라인</h6>
+                    <div class="mb-3">
+                        <label class="form-label">학습 환경</label>
+                        <select class="form-select" id="arch_training">
+                            <option value="cloud">Cloud (AWS/GCP/Azure)</option>
+                            <option value="onprem">On-Premise</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">모델 서빙</label>
+                        <select class="form-select" id="arch_serving">
+                            <option value="rest">REST API</option>
+                            <option value="grpc">gRPC</option>
+                            <option value="edge">Edge Deployment</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <h6>기술 스택</h6>
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label class="form-label small">ML Framework</label>
+                            <select class="form-select form-select-sm" id="tech_ml">
+                                <option value="pytorch">PyTorch</option>
+                                <option value="tensorflow">TensorFlow</option>
+                                <option value="sklearn">Scikit-learn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">MLOps Platform</label>
+                            <select class="form-select form-select-sm" id="tech_mlops">
+                                <option value="mlflow">MLflow</option>
+                                <option value="kubeflow">Kubeflow</option>
+                                <option value="sagemaker">SageMaker</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Container</label>
+                            <select class="form-select form-select-sm" id="tech_container">
+                                <option value="kubernetes">Kubernetes</option>
+                                <option value="docker">Docker Swarm</option>
+                                <option value="ecs">AWS ECS</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Monitoring</label>
+                            <select class="form-select form-select-sm" id="tech_monitor">
+                                <option value="prometheus">Prometheus + Grafana</option>
+                                <option value="datadog">Datadog</option>
+                                <option value="cloudwatch">CloudWatch</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="button" class="btn btn-primary btn-lg" onclick="saveArchitecture()">
+                    <i class="bi bi-check-lg me-2"></i>아키텍처 설계 저장
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

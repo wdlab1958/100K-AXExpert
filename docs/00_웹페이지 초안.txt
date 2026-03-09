@@ -1,0 +1,98 @@
+﻿[디자인 기획서] AI Consulting Assistant Platform 웹 페이지
+> Update: March 9, 2026 / Designer: Brian Lee / 100K AX Expert Team
+본 기획서는 기업의 AI 전환(AX)을 지원하는 멀티 에이전트 기반 플랫폼의 전문성을 시각화하고, 복잡한 아키텍처를 직관적으로 전달하는 데 중점을 둡니다1111.
+1. 디자인 컨셉 및 방향
+    • 핵심 키워드: 신뢰성(Reliability), 보안(Security), 협업(Collaboration), 지능화(Intelligence)2222222.
+    • 컬러 팔레트: * Deep Navy: 전문성과 신뢰감 강조 (Main)
+        ◦ Electric Blue: 기술적 진보와 AI 에이전트 이미지 (Accent)
+        ◦ Slate Grey & White: 가독성 높은 배경 및 문서 느낌 (Background)
+    • 폰트: 현대적인 고딕체 (예: Pretendard, Noto Sans KR)를 사용하여 가독성 확보.
+
+2. 웹 페이지 구조 (Information Architecture)
+GNB (Global Navigation Bar)
+    • 플랫폼 개요 | 아키텍처 | 5단계 워크플로우 | 보안 및 거버넌스 | API 가이드
+
+Section 1: 히어로 섹션 (Hero Section)
+    • 메시지: "전문 컨설턴트 없이도 완성되는 기업용 AX 전략, 멀티 에이전트가 함께합니다."3.
+    • 시각 요소: 인간 컨설턴트와 AI 에이전트가 협업하는 모습을 추상화한 그래픽 또는 플랫폼 메인 대시보드 목업4.
+    • CTA 버튼: [무료 진단 시작하기] / [아키텍처 리포트 다운로드]
+Section 2: 하이브리드 LLM & 보안 (Security First)
+    • 콘텐츠: Ollama 기반 Local LLM을 통한 데이터 보호 강조5555.
+    • 디자인: 'Local vs Online' 비교 테이블을 인포그래픽으로 시각화하여 데이터 유출 위험이 없음을 명시6.
+    • 기술 스택 카드: LLM Engine(Ollama), Embedding(nomic-embed-text) 등 핵심 기술 노출7777.
+Section 3: 멀티 에이전트 협업 시스템 (Agent Mesh)
+    • 콘텐츠: 5개 전문 에이전트의 역할 분담8.
+    • 디자인: 에이전트 메시 네트워크 다이어그램 배치9.
+        ◦ Strategy Analyst: 성숙도 진단 및 로드맵 수립10.
+        ◦ Use Case Designer: 아키텍처 및 거버넌스 설계11.
+        ◦ ROI Analyst: 투자 효과 및 TCO 분석12.
+        ◦ Risk Assessor: 기술/비즈니스 리스크 평가13.
+        ◦ Report Generator: 최종 리포트 자동 생성14.
+Section 4: 5단계 컨설팅 프레임워크 (Workflow)
+    • 콘텐츠: AI 비전 수립부터 운영 최적화까지의 전 과정 자동화15151515.
+    • 디자인: 가로형 타임라인 또는 스텝 바(Step Bar) 디자인 적용.
+        1. Strategy: 성숙도 진단16.
+        2. Define & Design: 요건 정의 및 설계17.
+        3. Build: PoC 및 플랫폼 구축18.
+        4. Scale: 파일럿 및 전사 확산19.
+        5. Operate: 모니터링 및 개선20.
+Section 5: 데이터 기반 가중치 분석 (Analytics)
+    • 콘텐츠: 컨설턴트 입력 데이터가 리포트에 미치는 영향21.
+    • 디자인: IT Infrastructure, Data Assets 등 입력 항목에 따른 성숙도 점수(2.0 -> 3.5) 변화를 보여주는 인터랙티브 차트22222222.
+
+3. 기능적 요구사항 (Interaction)
+    • 스크롤 애니메이션: 섹션 전환 시 요소들이 부드럽게 나타나 기술적인 세련미 강조.
+    • API 문서 미리보기: 부록에 명시된 API 엔드포인트 목록을 코드 블록 형태로 깔끔하게 제공23232323.
+    • 리포트 샘플 뷰어: 'Executive Summary' 및 'Full Report'의 목차 구조를 미리 볼 수 있는 탭 메뉴 구성24242424.
+
+4. Google Antigravity 제작 가이드
+    1. 레이아웃: 12컬럼 그리드 시스템을 사용하여 반응형 대응.
+    2. 아이콘: Material Design 아이콘 또는 기술 특화 라인 아이콘 사용.
+    3. 이미지: 보고서 2페이지의 아키텍처 다이어그램25과 12페이지의 데이터 흐름도26를 고해상도 SVG로 변환하여 삽입.
+
+[디자인 기획 상세안] AI Consulting Assistant Platform
+1. 웹 사이트 구조 및 메인 카피
+    • 사이트 타이틀: AX-Navigator: Multi-Agent 100K-AX Expert Platform 1
+    • 메인 카피: "전문 컨설턴트 부족 문제를 해결하는 AI 기반 Self-Consulting의 미래" 2222
+    • 서브 카피: "하이브리드 LLM 아키텍처와 5개 전문 AI 에이전트가 기업의 AX 성공 로드맵을 설계합니다." 333333333
+
+2. 섹션별 상세 디자인 명세
+섹션 1: 하이브리드 LLM & 보안 (Security Architecture)
+    • 디자인 컨셉: 안전한 데이터 보호를 강조하는 방어막(Shield) 비주얼 사용4444.
+    • 주요 콘텐츠:
+        ◦ Local LLM 운영: Ollama(llama3.1:8b)를 활용한 폐쇄망 환경 추론으로 기업 내부 데이터 유출 원천 차단55555555.
+        ◦ 보안 이점 비교표: 데이터 유출 위험 없음, 네트워크 의존성 제거, 낮은 응답 지연 시간 시각화6.
+        ◦ 기술 스택 태그: FastAPI, SQLite, nomic-embed-text7777.
+섹션 2: 멀티 에이전트 협업 (Multi-Agent Framework)
+    • 디자인 컨셉: 5개 에이전트가 유기적으로 연결된 메시(Mesh) 네트워크 다이어그램 배치8.
+    • 에이전트별 카드 디자인:
+        ◦ Strategy Analyst: AI 성숙도 진단 및 로드맵 수립 담당99.
+        ◦ Use Case Designer: 아키텍처 설계 및 거버넌스 수립 담당1010.
+        ◦ ROI Analyst: 투자 효과(TCO) 및 시나리오 비교 분석 담당1111.
+        ◦ Risk Assessor: 기술/조직/운영 리스크 평가 및 완화 전략 수립12121212.
+        ◦ Report Generator: Executive Summary 및 최종 보고서 자동 문서화13131313.
+섹션 3: 5단계 컨설팅 프로세스 (Workflow)
+    • 디자인 컨셉: 사용자의 여정을 보여주는 단계별 인터랙티브 카드14141414.
+    • 워크플로우 단계:
+        1. Strategy: AI 비전 및 전략 수립 (성숙도 진단 포함)15151515.
+        2. Design: Use Case 및 상세 설계 정의16161616.
+        3. Build: 플랫폼 구축 및 솔루션 개발17171717.
+        4. Scale: 파일럿 운영 및 전사 확산18181818.
+        5. Operate: 모니터링 및 지속적 개선19191919.
+섹션 4: 데이터 기반 정밀 분석 (Data-Driven Insights)
+    • 디자인 컨셉: 입력 데이터에 따라 실시간으로 변하는 점수 그래프 시뮬레이션20202020.
+    • 핵심 로직 노출:
+        ◦ IT 인프라, 데이터 자산, 인적 자원 등 가중치 기반 성숙도 계산 로직 요약21212121.
+        ◦ ROI(60%)와 리스크(40%) 가중치를 적용한 시나리오 종합 점수 산출 방식 설명222222222222222222.
+
+3. 주요 호출 기능 (API 및 인터랙션)
+    • 시뮬레이션 버튼: run-full-consultation API 호출 시뮬레이션으로 전체 공정 가시화23232323.
+    • 보고서 미리보기: Executive Summary(4개 섹션)와 Full Report(6개 장)의 샘플 뷰어 제공24242424.
+    • 피드백 루프: 인간 전문가의 피드백이 AI 응답에 반영되는 AutoGen 패턴 시각화25252525.
+
+4. 시각화 자료 제작 요청 가이드
+Google Antigravity의 이미지 생성 도구를 위해 다음과 같은 프롬프트를 제안합니다.
+    • 아키텍처: "Professional technical architecture diagram of a multi-agent AI system, blue and navy color scheme, isometric style."
+    • 에이전트: "Five futuristic AI agent icons representing Strategy, Design, ROI, Risk, and Reporting, clean line art."
+
+

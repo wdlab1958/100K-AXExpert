@@ -1,0 +1,97 @@
+<div class="tab-pane fade" id="tab-opportunity" data-save-key="stage1-opportunities">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-lightbulb me-2"></i> AI 도입 기회 발굴</span>
+            <button class="btn btn-primary btn-sm" onclick="addOpportunity()">
+                <i class="bi bi-plus-lg"></i> 기회 추가
+            </button>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">비즈니스 가치 사슬(Value Chain) 분석을 통해 AI 적용이 가능한 업무 영역과 잠재 후보 과제를 식별합니다.</p>
+
+            <div class="alert alert-info">
+                <strong>주요 기회 영역:</strong>
+                반복적 작업 자동화 | 병목 해소 및 프로세스 최적화 | 예측/분석 기반 의사결정 | 고객 경험 향상 | 품질 관리 | 예지 정비
+            </div>
+
+            <div id="opportunityList">
+                <!-- 기회 목록이 동적으로 추가됨 -->
+            </div>
+
+            <!-- 기회 추가 폼 -->
+            <div id="opportunityForm" class="card mt-4" style="display:none;">
+                <div class="card-header">새 기회 등록</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">비즈니스 영역</label>
+                            <select class="form-select" id="opp_area">
+                                <option value="production">생산/제조</option>
+                                <option value="sales">영업/마케팅</option>
+                                <option value="customer">고객 서비스</option>
+                                <option value="logistics">물류/SCM</option>
+                                <option value="hr">인사/총무</option>
+                                <option value="finance">재무/회계</option>
+                                <option value="rd">연구개발</option>
+                                <option value="quality">품질관리</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">해결하고자 하는 문제점 (Pain Point)</label>
+                            <input type="text" class="form-control" id="opp_pain" placeholder="예: 수작업 품질 검사로 인한 불량 누락">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">현재 프로세스 설명</label>
+                            <textarea class="form-control" id="opp_current" rows="2"
+                                placeholder="현재 업무 프로세스를 설명해주세요"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">기대 효과</label>
+                            <textarea class="form-control" id="opp_benefit" rows="2"
+                                placeholder="AI 도입 시 기대되는 효과를 설명해주세요"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">데이터 가용성 (1-5)</label>
+                            <input type="range" class="form-range" id="opp_data" min="1" max="5" value="3" 
+                                oninput="updateSliderDisplay('opp_data', 'opp_data_display')">
+                            <small class="text-muted">현재: <span id="opp_data_display">3</span></small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">긴급도 (1-5)</label>
+                            <input type="range" class="form-range" id="opp_urgency" min="1" max="5" value="3"
+                                oninput="updateSliderDisplay('opp_urgency', 'opp_urgency_display')">
+                            <small class="text-muted">현재: <span id="opp_urgency_display">3</span></small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">전략 정합성 (1-5)</label>
+                            <input type="range" class="form-range" id="opp_strategic" min="1" max="5" value="3"
+                                oninput="updateSliderDisplay('opp_strategic', 'opp_strategic_display')">
+                            <small class="text-muted">현재: <span id="opp_strategic_display">3</span></small>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary" onclick="saveOpportunity()">저장</button>
+                        <button type="button" class="btn btn-outline-secondary"
+                            onclick="cancelOpportunity()">취소</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="button" class="btn btn-primary btn-lg" onclick="saveAllOpportunities()">
+                    <i class="bi bi-check-lg me-2"></i>기회 발굴 저장
+                </button>
+                <button type="button" class="btn btn-success btn-lg ms-2"
+                    onclick="analyzeWithAI('opportunity')">
+                    <i class="bi bi-robot me-2"></i>AI 분석 요청
+                </button>
+                <small class="text-muted ms-3">
+                    <i class="bi bi-info-circle me-1"></i>저장된 기회 발굴 데이터를 기준으로 AI가 분석합니다.
+                </small>
+            </div>
+
+            <!-- AI 분석 결과 영역 -->
+            <div id="opportunityAnalysisResult" class="mt-4"></div>
+        </div>
+    </div>
+</div>

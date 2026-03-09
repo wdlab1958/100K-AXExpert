@@ -1,0 +1,1 @@
+{"event_id": "32759adbdb38541c", "event_type": "provider_enabled", "severity": "warning", "message": "Provider configured: claude", "details": {"provider": "claude", "enabled": true}, "user_id": "system", "session_id": "", "ip_address": "", "timestamp": "2025-12-01T19:43:49.227902"}

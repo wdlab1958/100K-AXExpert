@@ -1,0 +1,1865 @@
+================================================================================
+> Update: March 9, 2026 / Designer: Brian Lee / 100K AX Expert Team
+  AI CONSULTING PLATFORM - HUMAN-IN-THE-LOOP (HITL) ARCHITECTURE
+================================================================================
+
+문서 버전: 1.1
+작성일: 2025-12-11
+Update Date: Dec. 16, 2025
+Editor: Brian Lee / WDLAB AI/ML/AX Group
+목적: AI 컨설팅 플랫폼에 인간 제어, 승인, 감사 기능을 갖춘 HITL 아키텍처 구현
+
+================================================================================
+목차
+================================================================================
+
+1. 현재 시스템 분석
+2. HITL 아키텍처 개요
+3. 핵심 컴포넌트 설계
+4. 제어 포인트 (Control Points)
+5. 승인 워크플로우 (Approval Workflows)
+6. 감사 시스템 (Audit System)
+7. 기술 스택
+8. 데이터 모델
+9. API 설계
+10. 구현 로드맵
+11. 프롬프트 기반 구현 가이드
+
+================================================================================
+1. 현재 시스템 분석
+================================================================================
+
+[현재 아키텍처]
+┌────────────────────────────────────┐
+│  FastAPI Backend (main.py)                                  │
+│  ├── API Routes (/api/v1/)                                 │
+│  ├── ConsultingOrchestrator (agent_orchestrator.py)         │
+│  │   ├── StrategyAnalystAgent                               │
+│  │   ├── UseCaseDesignerAgent                               │
+│  │   ├── ROIAnalystAgent                                    │
+│  │   ├── RiskAssessorAgent                                  │
+│  │   └── ReportGeneratorAgent                               │
+│  ├── Security Module (audit_logger.py)                      │
+│  └── Templates (Frontend - index.html)                      │
+└────────────────────────────────────┘
+
+[현재 구현된 기능]
+✓ 멀티 에이전트 협업 (LangGraph 기반)
+✓ 5단계 컨설팅 프레임워크
+✓ 기본 피드백 수집 (HumanFeedback)
+✓ 시나리오 승인 (ApproveScenarioRequest)
+✓ 감사 로깅 (AuditLogger)
+
+[HITL 구현 필요 영역]
+✗ 에이전트 실행 전 인간 승인
+✗ 실시간 에이전트 모니터링 및 중단
+✗ 에이전트 출력 검증 및 수정
+✗ 단계별 체크포인트 및 게이트
+✗ 인간 전문가 에스컬레이션
+✗ 상세 감사 트레일 및 설명 가능성
+
+
+================================================================================
+2. HITL 아키텍처 개요
+================================================================================
+
+[설계 철학]
+"AI는 제안하고, 인간은 결정한다"
+- 모든 중요한 의사결정은 인간이 승인
+- 에이전트는 자율적으로 분석하되, 제어 포인트에서 대기
+- 전 과정이 투명하고 감사 가능
+
+[HITL 레이어 구조]
+┌────────────────────────────────────┐
+│  Layer 1: Human Control Interface (Frontend)                │
+│  - Dashboard, Approval UI, Monitoring Console               │
+├────────────────────────────────────┤
+│  Layer 2: HITL Orchestration Layer (New)                    │
+│  - Checkpoint Manager                                       │
+│  - Approval Workflow Engine                                 │
+│  - Human Task Queue                                         │
+│  - Escalation Manager                                       │
+├────────────────────────────────────┤
+│  Layer 3: Agent Execution Layer (Existing + Enhanced)       │
+│  - Consulting Agents with Pause/Resume                      │
+│  - State Persistence                                        │
+│  - Rollback Capability                                      │
+├────────────────────────────────────┤
+│  Layer 4: Audit & Compliance Layer (Enhanced)               │
+│  - Comprehensive Audit Trail                                │
+│  - Decision Tracking                                        │
+│  - Explainability Engine                                    │
+└────────────────────────────────────┘
+
+[주요 HITL 패턴]
+1. Approval Gates: 중요 단계 진입 전 인간 승인 필요
+2. Human Override: 에이전트 결과를 인간이 수정 가능
+3. Active Monitoring: 실시간 에이전트 활동 모니터링 및 개입
+4. Fallback Escalation: 에이전트 불확실성 시 인간 에스컬레이션
+
+
+================================================================================
+3. 핵심 컴포넌트 설계
+================================================================================
+
+[3.1 Checkpoint Manager]
+목적: 워크플로우의 중요 지점에서 인간 개입 제어
+
+├── CheckpointType (Enum)
+│   ├── PRE_STAGE: 단계 시작 전 승인
+│   ├── POST_STAGE: 단계 완료 후 검증
+│   ├── CRITICAL_DECISION: 중요 의사결정 시점
+│   ├── HIGH_RISK: 고위험 작업 전
+│   └── QUALITY_CHECK: 품질 검증 필요
+
+├── CheckpointStatus (Enum)
+│   ├── PENDING: 인간 승인 대기
+│   ├── APPROVED: 승인됨, 진행 가능
+│   ├── REJECTED: 거부됨, 재작업 필요
+│   ├── MODIFIED: 수정 후 승인
+│   └── SKIPPED: 건너뜀 (긴급 상황)
+
+└── Checkpoint Model
+    ├── id: str
+    ├── project_id: str
+    ├── checkpoint_type: CheckpointType
+    ├── stage: ConsultingStage
+    ├── agent_id: str
+    ├── context: Dict[str, Any]  # 의사결정 컨텍스트
+    ├── agent_output: Optional[Dict]  # 에이전트 출력
+    ├── status: CheckpointStatus
+    ├── reviewer_id: Optional[str]
+    ├── reviewer_comment: Optional[str]
+    ├── created_at: datetime
+    ├── reviewed_at: Optional[datetime]
+    └── timeout_seconds: int  # 자동 에스컬레이션
+
+
+[3.2 Human Task Queue]
+목적: 인간 검토가 필요한 작업을 우선순위별로 관리
+
+├── TaskPriority (Enum)
+│   ├── CRITICAL: 즉시 처리 필요 (15분 이내)
+│   ├── HIGH: 긴급 (1시간 이내)
+│   ├── MEDIUM: 일반 (4시간 이내)
+│   └── LOW: 낮음 (1일 이내)
+
+├── TaskType (Enum)
+│   ├── APPROVAL: 승인 요청
+│   ├── REVIEW: 검토 요청
+│   ├── VALIDATION: 검증 요청
+│   ├── CORRECTION: 수정 요청
+│   └── ESCALATION: 에스컬레이션
+
+└── HumanTask Model
+    ├── id: str
+    ├── project_id: str
+    ├── task_type: TaskType
+    ├── priority: TaskPriority
+    ├── title: str
+    ├── description: str
+    ├── context: Dict[str, Any]
+    ├── assignee_role: str  # "consultant", "manager", "executive"
+    ├── assignee_id: Optional[str]
+    ├── status: str  # "pending", "in_progress", "completed", "cancelled"
+    ├── deadline: datetime
+    ├── created_at: datetime
+    └── completed_at: Optional[datetime]
+
+
+[3.3 Approval Workflow Engine]
+목적: 복잡한 다단계 승인 프로세스 자동화
+
+Workflow Types:
+1. Single Approval: 단일 승인자 (컨설턴트)
+2. Hierarchical Approval: 계층적 승인 (컨설턴트 → 매니저 → 임원)
+3. Parallel Approval: 병렬 승인 (여러 부서장 동시)
+4. Conditional Approval: 조건부 승인 (금액/리스크 기준)
+
+├── ApprovalWorkflow Model
+│   ├── id: str
+│   ├── name: str
+│   ├── description: str
+│   ├── workflow_type: str
+│   ├── steps: List[ApprovalStep]
+│   ├── conditions: Dict[str, Any]
+│   └── timeout_policy: str
+
+└── ApprovalStep Model
+    ├── step_id: str
+    ├── step_name: str
+    ├── required_role: str
+    ├── required_approvers: int  # 최소 승인자 수
+    ├── auto_approve_conditions: Optional[Dict]
+    └── timeout_action: str  # "escalate", "auto_approve", "reject"
+
+
+[3.4 Agent State Manager]
+목적: 에이전트 실행 상태를 체크포인트별로 저장 및 복원
+
+Features:
+- Pause/Resume: 에이전트 실행 일시정지 및 재개
+- Rollback: 이전 체크포인트로 되돌리기
+- State Snapshot: 각 단계별 상태 스냅샷 저장
+- Branch & Merge: 여러 시나리오 병렬 탐색
+
+├── AgentExecutionState Model
+│   ├── id: str
+│   ├── project_id: str
+│   ├── agent_id: str
+│   ├── execution_id: str  # 실행 세션 ID
+│   ├── status: str  # "running", "paused", "waiting_approval", "completed", "failed"
+│   ├── current_step: str
+│   ├── state_snapshot: Dict[str, Any]
+│   ├── variables: Dict[str, Any]
+│   ├── messages: List[AgentMessage]
+│   ├── checkpoints: List[str]  # checkpoint IDs
+│   ├── can_rollback: bool
+│   ├── created_at: datetime
+│   └── updated_at: datetime
+
+
+[3.5 Escalation Manager]
+목적: 에이전트가 처리 불가능한 상황 시 인간에게 에스컬레이션
+
+Escalation Triggers:
+- Confidence Score < Threshold (예: 0.7)
+- Contradictory Information Detected
+- High Risk Decision Required
+- Timeout or Deadlock
+- Explicit Agent Request
+
+├── EscalationRule Model
+│   ├── id: str
+│   ├── name: str
+│   ├── trigger_condition: str  # Python expression
+│   ├── escalate_to_role: str
+│   ├── priority: TaskPriority
+│   ├── auto_notify: bool
+│   └── notification_channels: List[str]  # ["email", "slack", "ui"]
+
+└── EscalationCase Model
+    ├── id: str
+    ├── project_id: str
+    ├── agent_id: str
+    ├── trigger_reason: str
+    ├── context: Dict[str, Any]
+    ├── suggested_actions: List[str]
+    ├── escalated_to: str
+    ├── status: str
+    ├── resolution: Optional[str]
+    ├── created_at: datetime
+    └── resolved_at: Optional[datetime]
+
+
+[3.6 Audit Trail Engine]
+목적: 모든 의사결정과 인간 개입을 상세히 기록
+
+Audit Event Types:
+- AGENT_STARTED, AGENT_COMPLETED, AGENT_FAILED
+- CHECKPOINT_CREATED, CHECKPOINT_APPROVED, CHECKPOINT_REJECTED
+- HUMAN_OVERRIDE, HUMAN_MODIFICATION
+- STATE_ROLLBACK, WORKFLOW_RESUMED
+- ESCALATION_TRIGGERED, ESCALATION_RESOLVED
+
+├── AuditEvent Model (Enhanced)
+│   ├── event_id: str
+│   ├── timestamp: datetime
+│   ├── event_type: str
+│   ├── actor_type: str  # "human", "agent", "system"
+│   ├── actor_id: str
+│   ├── project_id: str
+│   ├── resource_type: str
+│   ├── resource_id: str
+│   ├── action: str
+│   ├── before_state: Optional[Dict]
+│   ├── after_state: Optional[Dict]
+│   ├── reason: Optional[str]
+│   ├── confidence_score: Optional[float]  # AI 신뢰도
+│   ├── decision_factors: Optional[List[str]]
+│   └── trace_id: str  # 전체 워크플로우 추적
+
+
+[3.7 Explainability Engine]
+목적: AI 에이전트의 결정에 대한 설명 생성
+
+Features:
+- Decision Explanation: 왜 이 결정을 했는지
+- Factor Analysis: 어떤 요인이 가장 중요했는지
+- Alternative Scenarios: 다른 선택지는 무엇이었는지
+- Confidence Breakdown: 신뢰도 구성 요소
+
+└── Explanation Model
+    ├── decision_id: str
+    ├── agent_id: str
+    ├── decision_summary: str
+    ├── reasoning_steps: List[str]
+    ├── key_factors: List[Dict]  # [{factor, weight, impact}]
+    ├── alternatives_considered: List[Dict]
+    ├── confidence_score: float
+    ├── confidence_breakdown: Dict[str, float]
+    ├── data_sources: List[str]
+    ├── assumptions: List[str]
+    ├── limitations: List[str]
+    └── generated_at: datetime
+
+
+================================================================================
+4. 제어 포인트 (Control Points) - 5단계별 매핑
+================================================================================
+
+[Stage 1: AI 비전 및 전략 수립]
+┌────────────────────────────┐
+│ CP-1.1: 성숙도 진단 시작 전 승인                        │
+│   - 진단 항목 및 기준 검토                              │
+│   - 담당 컨설턴트 승인 필요                             │
+│   - Type: PRE_STAGE                            │
+├────────────────────────────┤
+│ CP-1.2: 성숙도 진단 결과 검증                           │
+│   - 각 영역별 점수 타당성 검토                           │
+│   - 매니저 승인 필요                                    │
+│   - Type: POST_STAGE + QUALITY_CHECK           │
+├────────────────────────────┤
+│ CP-1.3: 기회 발굴 우선순위 결정                         │
+│   - Use Case 후보 선정                                │
+│   - 임원 승인 필요 (전략적 의사결정)                  │
+│   - Type: CRITICAL_DECISION                    │
+├────────────────────────────┤
+│ CP-1.4: 로드맵 최종 승인                       │
+│   - 일정, 예산, 자원 계획 검토                 │
+│   - 임원 승인 필요                             │
+│   - Type: CRITICAL_DECISION                    │
+└────────────────────────────┘
+
+[Stage 2: Use Case 및 설계 정의]
+┌────────────────────────────────────────────────┐
+│ CP-2.1: Use Case 상세 설계 검토                │
+│   - 기술적 타당성 검증                         │
+│   - 기술 리드 승인 필요                        │
+│   - Type: QUALITY_CHECK                        │
+├────────────────────────────────────────────────┤
+│ CP-2.2: 아키텍처 설계 승인                     │
+│   - 시스템 아키텍처 검토                       │
+│   - 아키텍트 + 보안팀 승인 필요                │
+│   - Type: CRITICAL_DECISION                    │
+├────────────────────────────────────────────────┤
+│ CP-2.3: 거버넌스 체계 승인                     │
+│   - 정책, 프로세스, 역할 검토                  │
+│   - 컴플라이언스팀 + 임원 승인 필요            │
+│   - Type: CRITICAL_DECISION                    │
+└────────────────────────────────────────────────┘
+
+[Stage 3: 플랫폼 및 솔루션 구축]
+┌────────────────────────────────────────────────┐
+│ CP-3.1: 플랫폼 구축 계획 승인                  │
+│   - 기술 스택, 인프라, 예산 검토               │
+│   - CTO + CFO 승인 필요                        │
+│   - Type: CRITICAL_DECISION + HIGH_RISK        │
+├────────────────────────────────────────────────┤
+│ CP-3.2: PoC 결과 평가                          │
+│   - PoC 성공 기준 달성 여부                    │
+│   - 프로젝트 매니저 + 기술 리드 승인 필요      │
+│   - Type: QUALITY_CHECK                        │
+├────────────────────────────────────────────────┤
+│ CP-3.3: 통합 테스트 검증                       │
+│   - 시스템 통합 이슈 확인                      │
+│   - QA 팀 + 운영팀 승인 필요                   │
+│   - Type: QUALITY_CHECK                        │
+└────────────────────────────────────────────────┘
+
+[Stage 4: 파일럿 및 확산]
+┌────────────────────────────────────────────────┐
+│ CP-4.1: 파일럿 대상 및 범위 결정               │
+│   - 파일럿 그룹 선정                           │
+│   - 사업부장 + 임원 승인 필요                  │
+│   - Type: CRITICAL_DECISION                    │
+├────────────────────────────────────────────────┤
+│ CP-4.2: 파일럿 결과 검토                       │
+│   - KPI 달성도, 사용자 피드백 분석             │
+│   - 매니저 승인 필요 (확산 여부 결정)          │
+│   - Type: CRITICAL_DECISION                    │
+├────────────────────────────────────────────────┤
+│ CP-4.3: 전사 확산 계획 승인                    │
+│   - 확산 전략, 일정, 리스크 관리               │
+│   - 임원 승인 필요                             │
+│   - Type: CRITICAL_DECISION                    │
+└────────────────────────────────────────────────┘
+
+[Stage 5: 운영, 모니터링 및 개선]
+┌────────────────────────────────────────────────┐
+│ CP-5.1: 운영 체계 검증                         │
+│   - SLA, 모니터링, 지원 체계                   │
+│   - 운영 리드 승인 필요                        │
+│   - Type: QUALITY_CHECK                        │
+├────────────────────────────────────────────────┤
+│ CP-5.2: 개선 제안 승인                         │
+│   - 시스템 개선 우선순위                       │
+│   - 프로젝트 매니저 승인 필요                  │
+│   - Type: CRITICAL_DECISION                    │
+└────────────────────────────────────────────────┘
+
+
+================================================================================
+5. 승인 워크플로우 (Approval Workflows)
+================================================================================
+
+[워크플로우 템플릿]
+
+Template 1: 단일 승인 (Simple Approval)
+─────────────────────────────────────────
+Use Case: 일반적인 분석 결과 검토
+Flow:
+  Start → Consultant Review → [Approved/Rejected] → End
+Timeout: 4시간
+Auto-escalate: Manager
+
+Template 2: 2단계 승인 (Two-Level Approval)
+─────────────────────────────────────────
+Use Case: 중요 설계 결정
+Flow:
+  Start → Technical Lead Review → Manager Approval → End
+Timeout: 1일
+Auto-escalate: Director
+
+Template 3: 임원 승인 (Executive Approval)
+─────────────────────────────────────────
+Use Case: 전략적 의사결정, 대규모 투자
+Flow:
+  Start → Consultant → Manager → Director → Executive → End
+Parallel: 재무, 법무, IT 부서 동시 검토 (Stage 2)
+Timeout: 3일
+Auto-escalate: CEO
+
+Template 4: 조건부 승인 (Conditional Approval)
+─────────────────────────────────────────
+Use Case: 예산 기반 승인 권한
+Conditions:
+  - 예산 < 1억: Manager 승인
+  - 예산 1억~5억: Director 승인
+  - 예산 > 5억: Executive 승인
+Flow: Dynamic based on conditions
+
+Template 5: 병렬 승인 (Parallel Approval)
+─────────────────────────────────────────
+Use Case: 타 부서 동의 필요
+Flow:
+  Start → [IT Lead, Business Lead, Security Lead] (병렬) → Manager → End
+Required: 모든 부서 승인 필요 (AND logic)
+Timeout: 2일
+
+
+[승인 결정 옵션]
+1. Approve: 승인, 다음 단계 진행
+2. Approve with Modifications: 수정 사항 반영 후 승인
+3. Reject: 거부, 에이전트 재실행
+4. Request More Info: 추가 정보 요청
+5. Escalate: 상위 의사결정권자에게 에스컬레이션
+6. Defer: 보류, 나중에 검토
+
+
+================================================================================
+6. 감사 시스템 (Audit System)
+================================================================================
+
+[감사 수준 (Audit Levels)]
+
+Level 1: Basic Audit
+- 누가, 언제, 무엇을 했는지만 기록
+- Event: action, timestamp, actor
+
+Level 2: Standard Audit (현재 구현)
+- 상태 변경 전후 기록
+- Event: action, timestamp, actor, before, after
+
+Level 3: Comprehensive Audit (HITL 필수)
+- 의사결정 근거, 대안, 신뢰도까지 기록
+- Event: action, timestamp, actor, before, after, reason, alternatives, confidence
+
+Level 4: Forensic Audit
+- 완전한 재현 가능, 모든 컨텍스트 저장
+- Event: full context snapshot, all variables, messages, external calls
+
+
+[감사 보고서 종류]
+
+1. Decision Trail Report
+   - 특정 의사결정의 전체 과정 추적
+   - 누가 언제 어떤 근거로 결정했는지
+
+2. Human Intervention Report
+   - 인간 개입 빈도, 유형, 결과 분석
+   - 에이전트 신뢰도 개선 인사이트
+
+3. Compliance Report
+   - 규정 준수 여부 검증
+   - 필수 승인 절차 이행 확인
+
+4. Agent Performance Report
+   - 에이전트별 성공률, 인간 수정 빈도
+   - 개선이 필요한 에이전트 식별
+
+5. Timeline Report
+   - 프로젝트 전체 타임라인
+   - 병목 지점 및 지연 원인 분석
+
+
+[감사 데이터 보존]
+- Real-time: In-memory cache (최근 1시간)
+- Short-term: SQLite DB (최근 30일)
+- Long-term: 파일 아카이브 (1년)
+- Compliance: 암호화된 불변 저장소 (법적 요구사항에 따라)
+
+
+================================================================================
+7. 기술 스택
+================================================================================
+
+[Backend Core]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Component              Technology         Purpose
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Workflow Engine        LangGraph          멀티 에이전트 오케스트레이션
+State Management       Redis + SQLite     실시간 상태 + 영구 저장
+Task Queue             Celery + Redis     비동기 작업 큐
+WebSocket              FastAPI WebSocket  실시간 업데이트
+Scheduler              APScheduler        타임아웃, 에스컬레이션
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[HITL Specific]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Component              Technology         Purpose
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Approval Engine        Custom + State     승인 워크플로우 관리
+                       Machine
+Checkpoint Manager     LangGraph          체크포인트 관리
+                       Checkpointer
+Real-time Monitor      WebSocket +        에이전트 실시간 모니터링
+                       Server-Sent Events
+Notification           Celery + Email/    알림 발송
+                       Slack API
+Audit Store            SQLite +           감사 로그 저장
+                       JSON Files
+Explainability         LangChain +        결정 설명 생성
+                       Ollama
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Frontend]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Component              Technology         Purpose
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UI Framework           Bootstrap 5 +      기존 템플릿 확장
+                       Vanilla JS
+Real-time Updates      WebSocket Client   실시간 상태 업데이트
+Task Dashboard         DataTables.js      작업 목록 관리
+Approval Interface     Custom UI          승인 워크플로우 UI
+Monitoring Console     Chart.js +         실시간 모니터링 대시보드
+                       Timeline.js
+Notification           Toast.js           인앱 알림
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Optional but Recommended]
+- Redis: Fast state management, caching
+- Celery: Distributed task queue for long-running tasks
+- Flower: Celery monitoring
+- Prometheus + Grafana: Metrics & monitoring
+- ELK Stack: Log aggregation & analysis
+
+
+================================================================================
+8. 데이터 모델 (Pydantic Schemas)
+================================================================================
+
+# ==================== HITL Core Models ====================
+
+class CheckpointType(str, Enum):
+    PRE_STAGE = "pre_stage"
+    POST_STAGE = "post_stage"
+    CRITICAL_DECISION = "critical_decision"
+    HIGH_RISK = "high_risk"
+    QUALITY_CHECK = "quality_check"
+
+class CheckpointStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    MODIFIED = "modified"
+    SKIPPED = "skipped"
+    TIMEOUT = "timeout"
+
+class Checkpoint(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    checkpoint_type: CheckpointType
+    stage: ConsultingStage
+    agent_id: str
+    agent_name: str
+
+    # Context
+    title: str
+    description: str
+    context: Dict[str, Any] = Field(default_factory=dict)
+    agent_output: Optional[Dict[str, Any]] = None
+    agent_confidence: Optional[float] = None  # 0.0 ~ 1.0
+
+    # Status
+    status: CheckpointStatus = CheckpointStatus.PENDING
+
+    # Review
+    required_role: str = "consultant"  # consultant, manager, director, executive
+    reviewer_id: Optional[str] = None
+    reviewer_name: Optional[str] = None
+    reviewer_comment: Optional[str] = None
+    review_decision: Optional[str] = None  # approve, reject, modify, escalate
+    modified_output: Optional[Dict[str, Any]] = None
+
+    # Timing
+    created_at: datetime = Field(default_factory=datetime.now)
+    reviewed_at: Optional[datetime] = None
+    timeout_seconds: int = 14400  # 4 hours default
+    deadline: datetime = Field(default_factory=lambda: datetime.now() + timedelta(hours=4))
+
+    # Workflow
+    blocking: bool = True  # True = must wait for approval, False = async review
+    auto_approve_on_timeout: bool = False
+    escalate_on_timeout: bool = True
+    escalate_to_role: Optional[str] = "manager"
+
+class TaskPriority(str, Enum):
+    CRITICAL = "critical"  # 15 min
+    HIGH = "high"  # 1 hour
+    MEDIUM = "medium"  # 4 hours
+    LOW = "low"  # 1 day
+
+class TaskType(str, Enum):
+    APPROVAL = "approval"
+    REVIEW = "review"
+    VALIDATION = "validation"
+    CORRECTION = "correction"
+    ESCALATION = "escalation"
+
+class HumanTask(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    checkpoint_id: Optional[str] = None  # Link to checkpoint if applicable
+
+    # Task Info
+    task_type: TaskType
+    priority: TaskPriority
+    title: str
+    description: str
+    context: Dict[str, Any] = Field(default_factory=dict)
+
+    # Assignment
+    assignee_role: str  # consultant, manager, director, executive
+    assignee_id: Optional[str] = None
+    assignee_name: Optional[str] = None
+
+    # Status
+    status: str = "pending"  # pending, assigned, in_progress, completed, cancelled
+
+    # Actions
+    available_actions: List[str] = Field(default_factory=list)  # ["approve", "reject", "modify"]
+    response_data: Optional[Dict[str, Any]] = None
+
+    # Timing
+    created_at: datetime = Field(default_factory=datetime.now)
+    assigned_at: Optional[datetime] = None
+    deadline: datetime = Field(default_factory=lambda: datetime.now() + timedelta(hours=4))
+    completed_at: Optional[datetime] = None
+
+    # Escalation
+    escalated_from: Optional[str] = None  # Previous task ID if escalated
+    can_escalate: bool = True
+    escalate_to_role: Optional[str] = None
+
+class AgentExecutionState(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    agent_id: str
+    execution_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+
+    # Status
+    status: str = "running"  # running, paused, waiting_approval, completed, failed, cancelled
+    current_step: str
+    progress: float = 0.0  # 0.0 ~ 1.0
+
+    # State
+    state_snapshot: Dict[str, Any] = Field(default_factory=dict)
+    variables: Dict[str, Any] = Field(default_factory=dict)
+    messages: List[Dict[str, Any]] = Field(default_factory=list)
+
+    # Control
+    can_pause: bool = True
+    can_resume: bool = False
+    can_rollback: bool = False
+    can_cancel: bool = True
+
+    # Checkpoints
+    checkpoint_ids: List[str] = Field(default_factory=list)
+    current_checkpoint_id: Optional[str] = None
+
+    # Timing
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+    completed_at: Optional[datetime] = None
+
+    # Error handling
+    error: Optional[str] = None
+    retry_count: int = 0
+    max_retries: int = 3
+
+class EscalationTrigger(str, Enum):
+    LOW_CONFIDENCE = "low_confidence"
+    TIMEOUT = "timeout"
+    HIGH_RISK = "high_risk"
+    AGENT_REQUEST = "agent_request"
+    QUALITY_ISSUE = "quality_issue"
+    CONTRADICTION = "contradiction"
+    EXTERNAL_REQUIREMENT = "external_requirement"
+
+class EscalationCase(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    agent_id: str
+    checkpoint_id: Optional[str] = None
+
+    # Trigger
+    trigger: EscalationTrigger
+    trigger_reason: str
+    trigger_details: Dict[str, Any] = Field(default_factory=dict)
+
+    # Context
+    context: Dict[str, Any] = Field(default_factory=dict)
+    agent_output: Optional[Dict[str, Any]] = None
+    confidence_score: Optional[float] = None
+
+    # Escalation
+    escalated_from_role: str
+    escalated_to_role: str
+    escalated_to_id: Optional[str] = None
+
+    # Resolution
+    status: str = "open"  # open, assigned, in_progress, resolved, cancelled
+    suggested_actions: List[str] = Field(default_factory=list)
+    resolution: Optional[str] = None
+    resolution_details: Optional[Dict[str, Any]] = None
+
+    # Timing
+    created_at: datetime = Field(default_factory=datetime.now)
+    assigned_at: Optional[datetime] = None
+    resolved_at: Optional[datetime] = None
+
+class DecisionExplanation(BaseModel):
+    decision_id: str
+    checkpoint_id: Optional[str] = None
+    agent_id: str
+
+    # Explanation
+    decision_summary: str
+    reasoning_steps: List[str]
+    key_factors: List[Dict[str, Any]]  # [{name, weight, impact, value}]
+
+    # Alternatives
+    alternatives_considered: List[Dict[str, Any]]
+    why_chosen: str
+    why_not_alternatives: List[str]
+
+    # Confidence
+    confidence_score: float  # 0.0 ~ 1.0
+    confidence_breakdown: Dict[str, float]  # {factor: contribution}
+
+    # Sources
+    data_sources: List[str]
+    assumptions: List[str]
+    limitations: List[str]
+
+    # Meta
+    generated_at: datetime = Field(default_factory=datetime.now)
+    llm_model: Optional[str] = None
+
+
+================================================================================
+9. API 설계
+================================================================================
+
+[HITL API Endpoints]
+
+# ==================== Checkpoint Management ====================
+
+POST   /api/v1/hitl/checkpoints
+       - Create new checkpoint
+       Request: {project_id, checkpoint_type, stage, agent_id, context, ...}
+       Response: {checkpoint_id, status, deadline, ...}
+
+GET    /api/v1/hitl/checkpoints/{checkpoint_id}
+       - Get checkpoint details
+
+PUT    /api/v1/hitl/checkpoints/{checkpoint_id}/review
+       - Review checkpoint (approve/reject/modify)
+       Request: {decision, comment, modified_output, ...}
+       Response: {status, next_action, ...}
+
+GET    /api/v1/hitl/checkpoints
+       - List checkpoints (with filters)
+       Query: ?project_id=&status=&assignee_role=
+
+DELETE /api/v1/hitl/checkpoints/{checkpoint_id}
+       - Cancel/skip checkpoint
+
+
+# ==================== Human Task Queue ====================
+
+GET    /api/v1/hitl/tasks
+       - Get human tasks (filtered by role, status, priority)
+       Query: ?assignee_role=consultant&status=pending&priority=high
+
+GET    /api/v1/hitl/tasks/{task_id}
+       - Get task details
+
+POST   /api/v1/hitl/tasks/{task_id}/assign
+       - Assign task to user
+       Request: {assignee_id, assignee_name}
+
+POST   /api/v1/hitl/tasks/{task_id}/complete
+       - Complete task with response
+       Request: {response_data, comment}
+
+POST   /api/v1/hitl/tasks/{task_id}/escalate
+       - Escalate task to higher authority
+       Request: {escalate_to_role, reason}
+
+
+# ==================== Agent Execution Control ====================
+
+GET    /api/v1/hitl/agents/executions/{execution_id}
+       - Get agent execution state
+
+POST   /api/v1/hitl/agents/executions/{execution_id}/pause
+       - Pause agent execution
+
+POST   /api/v1/hitl/agents/executions/{execution_id}/resume
+       - Resume agent execution
+
+POST   /api/v1/hitl/agents/executions/{execution_id}/cancel
+       - Cancel agent execution
+
+POST   /api/v1/hitl/agents/executions/{execution_id}/rollback
+       - Rollback to previous checkpoint
+       Request: {checkpoint_id}
+
+GET    /api/v1/hitl/agents/executions
+       - List agent executions
+       Query: ?project_id=&agent_id=&status=
+
+
+# ==================== Approval Workflows ====================
+
+GET    /api/v1/hitl/workflows
+       - List approval workflow templates
+
+GET    /api/v1/hitl/workflows/{workflow_id}
+       - Get workflow details
+
+POST   /api/v1/hitl/workflows/{workflow_id}/execute
+       - Execute workflow for checkpoint
+       Request: {checkpoint_id, context}
+
+GET    /api/v1/hitl/workflows/instances/{instance_id}
+       - Get workflow instance status
+
+
+# ==================== Escalation Management ====================
+
+GET    /api/v1/hitl/escalations
+       - List escalation cases
+       Query: ?project_id=&status=&escalated_to_role=
+
+GET    /api/v1/hitl/escalations/{escalation_id}
+       - Get escalation details
+
+POST   /api/v1/hitl/escalations/{escalation_id}/resolve
+       - Resolve escalation
+       Request: {resolution, resolution_details}
+
+
+# ==================== Audit & Reporting ====================
+
+GET    /api/v1/hitl/audit/events
+       - Get audit events
+       Query: ?project_id=&start_date=&end_date=&event_type=
+
+GET    /api/v1/hitl/audit/decision-trail/{decision_id}
+       - Get complete decision trail
+
+GET    /api/v1/hitl/audit/reports/human-interventions
+       - Generate human intervention report
+       Query: ?project_id=&start_date=&end_date=
+
+GET    /api/v1/hitl/audit/reports/compliance
+       - Generate compliance report
+
+
+# ==================== Explainability ====================
+
+GET    /api/v1/hitl/explanations/{decision_id}
+       - Get decision explanation
+
+POST   /api/v1/hitl/explanations/generate
+       - Generate explanation for decision
+       Request: {checkpoint_id, agent_output, context}
+
+
+# ==================== Real-time Updates (WebSocket) ====================
+
+WS     /api/v1/hitl/ws/projects/{project_id}
+       - Real-time updates for project
+       Events:
+         - checkpoint_created
+         - checkpoint_approved
+         - agent_status_changed
+         - task_assigned
+         - escalation_triggered
+
+
+================================================================================
+10. 구현 로드맵
+================================================================================
+
+[Phase 1: Core HITL Infrastructure (2-3주)]
+───────────────────────────────────────────
+Week 1:
+□ Checkpoint 모델 및 관리자 구현
+□ HumanTask 모델 및 큐 구현
+□ 기본 승인 워크플로우 엔진
+□ Agent State Manager (pause/resume)
+
+Week 2:
+□ HITL API 엔드포인트 구현
+□ Checkpoint와 Agent Orchestrator 통합
+□ 기본 Frontend 대시보드 (작업 목록)
+□ 승인 UI 구현
+
+Week 3:
+□ Escalation Manager 구현
+□ Enhanced Audit Trail 구현
+□ WebSocket 실시간 업데이트
+□ 통합 테스트
+
+Deliverables:
+✓ 기본 체크포인트 시스템
+✓ 인간 작업 큐 및 승인 UI
+✓ Agent 실행 제어 (pause/resume)
+✓ 기본 감사 로그
+
+
+[Phase 2: Advanced Features (2-3주)]
+───────────────────────────────────────────
+Week 4:
+□ 복잡한 승인 워크플로우 (계층적, 병렬)
+□ 조건부 라우팅
+□ Rollback 기능
+□ State Snapshot & Restore
+
+Week 5:
+□ Explainability Engine
+□ Decision Trail Visualization
+□ Advanced Monitoring Console
+□ Agent Performance Metrics
+
+Week 6:
+□ Notification 시스템 (Email, Slack)
+□ 타임아웃 및 자동 에스컬레이션
+□ Compliance 보고서
+□ Fine-tuning & optimization
+
+Deliverables:
+✓ 고급 승인 워크플로우
+✓ AI 설명 가능성
+✓ 실시간 모니터링 콘솔
+✓ 통합 알림 시스템
+
+
+[Phase 3: Polish & Production (1-2주)]
+───────────────────────────────────────────
+Week 7-8:
+□ 성능 최적화 (caching, indexing)
+□ 보안 강화 (RBAC, 권한 관리)
+□ 문서화 (API docs, user guide)
+□ 부하 테스트
+□ 프로덕션 배포 준비
+
+Deliverables:
+✓ Production-ready HITL system
+✓ 완전한 문서화
+✓ 성능 및 보안 검증
+
+
+================================================================================
+11. 프롬프트 기반 구현 가이드
+================================================================================
+
+이 섹션은 Claude Code나 다른 AI 코딩 도우미에게 제공하여 단계별로 구현할 수 있는 구체적인 프롬프트입니다.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 1: Checkpoint 모델 및 관리자 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 Human-in-the-Loop Checkpoint 시스템을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/checkpoint_manager.py
+2. 다음 클래스들을 구현:
+   - CheckpointType (Enum)
+   - CheckpointStatus (Enum)
+   - Checkpoint (Pydantic Model)
+   - CheckpointManager (Manager class)
+
+3. CheckpointManager는 다음 메서드 포함:
+   - create_checkpoint(project_id, checkpoint_type, stage, agent_id, context) -> Checkpoint
+   - get_checkpoint(checkpoint_id) -> Optional[Checkpoint]
+   - list_checkpoints(project_id, status, assignee_role) -> List[Checkpoint]
+   - review_checkpoint(checkpoint_id, decision, reviewer_id, comment, modified_output) -> Checkpoint
+   - check_timeout() -> List[Checkpoint]  # 타임아웃된 체크포인트 조회
+   - auto_escalate(checkpoint_id) -> None
+
+4. 저장소: 일단 in-memory dict 사용, 나중에 DB 연동 대비하여 추상화
+5. 기존 src/models/schemas.py에 데이터 모델 추가
+6. 단위 테스트 작성 (tests/test_checkpoint_manager.py)
+
+[참고]
+- 기존 ConsultingStage, AgentState 재사용
+- datetime, uuid 사용
+- Type hints 철저히
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 2: Human Task Queue 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 Human Task Queue 시스템을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/task_queue.py
+2. 다음 클래스들을 구현:
+   - TaskPriority (Enum)
+   - TaskType (Enum)
+   - HumanTask (Pydantic Model)
+   - HumanTaskQueue (Manager class)
+
+3. HumanTaskQueue는 다음 메서드 포함:
+   - create_task(project_id, task_type, priority, title, assignee_role, context) -> HumanTask
+   - get_task(task_id) -> Optional[HumanTask]
+   - list_tasks(filters: Dict) -> List[HumanTask]  # role, status, priority로 필터링
+   - assign_task(task_id, assignee_id, assignee_name) -> HumanTask
+   - complete_task(task_id, response_data, comment) -> HumanTask
+   - escalate_task(task_id, escalate_to_role, reason) -> HumanTask
+   - get_pending_tasks_by_role(role: str) -> List[HumanTask]
+   - get_overdue_tasks() -> List[HumanTask]
+
+4. 우선순위 큐 로직: priority별로 정렬
+5. 마감 시간 자동 계산
+6. 단위 테스트 작성
+
+[참고]
+- CheckpointManager와 연동하여 checkpoint로부터 task 자동 생성 가능
+- 나중에 Redis 기반 큐로 전환 가능하도록 인터페이스 설계
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 3: Agent State Manager (Pause/Resume) 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트의 Agent 실행 상태 관리 및 Pause/Resume 기능을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/agent_state_manager.py
+2. 다음 클래스들을 구현:
+   - AgentExecutionState (Pydantic Model)
+   - AgentStateManager (Manager class)
+
+3. AgentStateManager는 다음 메서드 포함:
+   - create_execution(project_id, agent_id, initial_state) -> AgentExecutionState
+   - get_execution(execution_id) -> Optional[AgentExecutionState]
+   - update_execution(execution_id, updates: Dict) -> AgentExecutionState
+   - save_checkpoint(execution_id, checkpoint_id, state_snapshot) -> None
+   - pause_execution(execution_id, reason: str) -> AgentExecutionState
+   - resume_execution(execution_id) -> AgentExecutionState
+   - cancel_execution(execution_id) -> AgentExecutionState
+   - rollback_to_checkpoint(execution_id, checkpoint_id) -> AgentExecutionState
+   - list_executions(project_id, agent_id, status) -> List[AgentExecutionState]
+
+4. State snapshot 저장: 전체 상태를 JSON으로 직렬화
+5. 기존 agent_orchestrator.py와 통합 준비
+
+[참고]
+- LangGraph의 Checkpointer 패턴 참고
+- 기존 ConsultingOrchestrator 수정 최소화
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 4: Approval Workflow Engine 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 승인 워크플로우 엔진을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/approval_workflow.py
+2. 다음 클래스들을 구현:
+   - ApprovalStep (Pydantic Model)
+   - ApprovalWorkflow (Pydantic Model)
+   - WorkflowInstance (Pydantic Model)
+   - ApprovalWorkflowEngine (Manager class)
+
+3. ApprovalWorkflowEngine는 다음 메서드 포함:
+   - create_workflow(name, steps, workflow_type, conditions) -> ApprovalWorkflow
+   - get_workflow(workflow_id) -> Optional[ApprovalWorkflow]
+   - list_workflows() -> List[ApprovalWorkflow]
+   - execute_workflow(workflow_id, checkpoint_id, context) -> WorkflowInstance
+   - get_workflow_instance(instance_id) -> Optional[WorkflowInstance]
+   - advance_workflow(instance_id, decision) -> WorkflowInstance
+   - get_current_step(instance_id) -> Optional[ApprovalStep]
+   - is_workflow_complete(instance_id) -> bool
+
+4. 워크플로우 타입 지원:
+   - single: 단일 승인
+   - hierarchical: 계층적 순차 승인
+   - parallel: 병렬 승인
+   - conditional: 조건부 라우팅
+
+5. 기본 워크플로우 템플릿 5개 제공
+
+[참고]
+- 간단한 상태 머신으로 구현
+- 추후 확장 가능하도록 설계
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 5: HITL API Endpoints 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 HITL API 엔드포인트를 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/api/hitl_routes.py
+2. 다음 API 엔드포인트 구현:
+
+Checkpoint APIs:
+  POST   /api/v1/hitl/checkpoints
+  GET    /api/v1/hitl/checkpoints/{checkpoint_id}
+  PUT    /api/v1/hitl/checkpoints/{checkpoint_id}/review
+  GET    /api/v1/hitl/checkpoints
+  DELETE /api/v1/hitl/checkpoints/{checkpoint_id}
+
+Task APIs:
+  GET    /api/v1/hitl/tasks
+  GET    /api/v1/hitl/tasks/{task_id}
+  POST   /api/v1/hitl/tasks/{task_id}/assign
+  POST   /api/v1/hitl/tasks/{task_id}/complete
+  POST   /api/v1/hitl/tasks/{task_id}/escalate
+
+Agent Control APIs:
+  GET    /api/v1/hitl/agents/executions/{execution_id}
+  POST   /api/v1/hitl/agents/executions/{execution_id}/pause
+  POST   /api/v1/hitl/agents/executions/{execution_id}/resume
+  POST   /api/v1/hitl/agents/executions/{execution_id}/cancel
+  POST   /api/v1/hitl/agents/executions/{execution_id}/rollback
+
+3. Request/Response 모델 정의 (Pydantic)
+4. 에러 핸들링 (HTTPException)
+5. main.py에 라우터 등록
+6. API 문서 자동 생성 (FastAPI)
+
+[참고]
+- 기존 routes.py 패턴 따르기
+- CheckpointManager, TaskQueue, AgentStateManager 사용
+- 인증/권한은 일단 스킵 (TODO로 표시)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 6: Agent Orchestrator HITL 통합
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트의 ConsultingOrchestrator에 HITL 체크포인트를 통합해주세요.
+
+[구현 요구사항]
+1. 파일 수정: src/agents/agent_orchestrator.py
+2. ConsultingOrchestrator 클래스에 다음 기능 추가:
+   - self.checkpoint_manager: CheckpointManager 인스턴스
+   - self.task_queue: HumanTaskQueue 인스턴스
+   - self.state_manager: AgentStateManager 인스턴스
+
+3. 주요 메서드에 체크포인트 추가:
+   - run_maturity_assessment()
+     → 시작 전: PRE_STAGE checkpoint
+     → 완료 후: POST_STAGE + QUALITY_CHECK checkpoint
+
+   - identify_opportunities()
+     → 완료 후: CRITICAL_DECISION checkpoint (Use Case 선정)
+
+   - create_roadmap()
+     → 완료 후: CRITICAL_DECISION checkpoint (로드맵 승인)
+
+   - generate_scenarios()
+     → 각 시나리오 생성 후: POST_STAGE checkpoint
+
+   - approve_scenario()
+     → 이미 구현되어 있으니 checkpoint와 연결
+
+4. 새 메서드 추가:
+   - async def _create_checkpoint(checkpoint_type, stage, agent_id, context, output) -> str
+   - async def _wait_for_checkpoint_approval(checkpoint_id) -> Dict
+   - async def _can_proceed(checkpoint_id) -> bool
+
+5. 실행 흐름:
+   Agent 작업 → Checkpoint 생성 → 인간 승인 대기 → 승인 시 계속, 거부 시 재실행
+
+[참고]
+- 기존 로직 최대한 보존
+- 모든 checkpoint는 async로 처리
+- 승인 대기 시 폴링 방식 (나중에 WebSocket으로 개선)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 7: Frontend - HITL Dashboard UI 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 HITL 대시보드 UI를 구현해주세요.
+
+[구현 요구사항]
+1. 파일 생성: templates/hitl_dashboard.html
+2. 기존 index.html 스타일 따라 Bootstrap 5 사용
+3. 다음 섹션 포함:
+
+   a) 내 작업 (My Tasks) - 우선순위 순
+      - Task 카드: 제목, 설명, 우선순위, 마감시간
+      - 작업 수락, 완료, 에스컬레이션 버튼
+      - 필터: 우선순위, 타입, 프로젝트
+
+   b) 대기 중인 체크포인트 (Pending Checkpoints)
+      - 체크포인트 목록: 프로젝트, 단계, 에이전트, 상태
+      - 상세 보기 모달: Context, Agent Output, Confidence
+      - 승인/거부/수정 버튼
+
+   c) 실시간 에이전트 활동 (Live Agent Activity)
+      - 진행 중인 에이전트 실행 목록
+      - 진행률 바, 현재 단계 표시
+      - Pause/Resume/Cancel 버튼
+
+   d) 최근 결정 (Recent Decisions)
+      - 최근 승인/거부된 항목 타임라인
+      - 누가, 언제, 무엇을 결정했는지
+
+4. JavaScript:
+   - API 호출: fetch() 사용
+   - 실시간 업데이트: setInterval로 폴링 (5초마다)
+   - Toast 알림: 새 작업 도착 시
+   - 모달 팝업: 상세 내용 표시
+
+5. main.py에 라우트 추가:
+   @app.get("/hitl/dashboard")
+   async def hitl_dashboard(request: Request):
+       return templates.TemplateResponse("hitl_dashboard.html", {"request": request})
+
+[참고]
+- 기존 index.html의 CSS/JS 재사용
+- DataTables.js로 테이블 구현
+- Chart.js로 통계 시각화
+- Responsive design (모바일 지원)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 8: Frontend - Approval Modal UI 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트의 HITL Dashboard에 승인 모달 UI를 추가해주세요.
+
+[구현 요구사항]
+1. 파일 수정: templates/hitl_dashboard.html
+2. Bootstrap Modal 사용
+3. 모달 내용:
+
+   헤더:
+   - 체크포인트 제목
+   - 프로젝트명, 단계, 에이전트명
+   - 생성 시간, 마감 시간
+
+   본문:
+   - Tab 1: Overview
+      작업 설명 (description)
+      컨텍스트 정보 (context)
+      AI 신뢰도 점수 (confidence_score)
+
+   - Tab 2: Agent Output
+      JSON Viewer로 agent_output 표시
+      주요 결과 하이라이트
+
+   - Tab 3: History (Optional)
+      이전 피드백, 관련 결정들
+
+   하단:
+   - 결정 라디오 버튼:
+     ○ Approve (승인)
+     ○ Approve with Modifications (수정 후 승인)
+     ○ Reject (거부)
+     ○ Request More Info (추가 정보 요청)
+     ○ Escalate (에스컬레이션)
+
+   - 수정 사항 입력 (Approve with Modifications 선택 시)
+      JSON Editor로 agent_output 수정
+
+   - 코멘트 입력 (필수)
+      승인/거부 이유 작성
+
+   - 제출 버튼 (Submit Decision)
+
+4. JavaScript 로직:
+   - 체크포인트 클릭 시 모달 오픈
+   - GET /api/v1/hitl/checkpoints/{id}로 상세 정보 로드
+   - JSON Viewer: json-viewer 라이브러리 사용
+   - 결정 제출: PUT /api/v1/hitl/checkpoints/{id}/review
+   - 성공 시 모달 닫기 및 목록 새로고침
+
+[참고]
+- JSON Editor: JSONEditor or Ace Editor
+- Syntax highlighting
+- 유효성 검사 (코멘트 필수)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 9: Escalation Manager 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 Escalation Manager를 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/escalation_manager.py
+2. 다음 클래스들을 구현:
+   - EscalationTrigger (Enum)
+   - EscalationRule (Pydantic Model)
+   - EscalationCase (Pydantic Model)
+   - EscalationManager (Manager class)
+
+3. EscalationManager는 다음 메서드 포함:
+   - add_rule(rule: EscalationRule) -> None
+   - check_escalation_conditions(checkpoint: Checkpoint) -> Optional[EscalationTrigger]
+   - create_escalation(project_id, agent_id, trigger, reason, context) -> EscalationCase
+   - get_escalation(escalation_id) -> Optional[EscalationCase]
+   - list_escalations(filters: Dict) -> List[EscalationCase]
+   - assign_escalation(escalation_id, assignee_id) -> EscalationCase
+   - resolve_escalation(escalation_id, resolution, resolution_details) -> EscalationCase
+   - auto_escalate_timeout_checkpoints() -> List[EscalationCase]
+   - notify_escalation(escalation: EscalationCase) -> None
+
+4. 기본 에스컬레이션 규칙:
+   - Confidence < 0.7 → Manager
+   - Timeout > 4 hours → Manager
+   - High Risk + Confidence < 0.8 → Director
+   - Critical Decision + Timeout → Executive
+   - Agent Explicit Request → Manager
+
+5. TaskQueue와 통합: 에스컬레이션 시 새 HumanTask 생성
+
+[참고]
+- 규칙은 설정 파일 또는 DB에서 로드 가능하도록
+- 알림 기능은 일단 로깅만 (TODO: Email/Slack)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 10: Enhanced Audit Trail 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트의 Audit Logger를 HITL에 맞게 확장해주세요.
+
+[구현 요구사항]
+1. 파일 수정: src/security/audit_logger.py
+2. 기존 AuditEvent 모델 확장:
+   - actor_type: str 추가 ("human", "agent", "system")
+   - confidence_score: Optional[float] 추가
+   - decision_factors: Optional[List[str]] 추가
+   - before_state: Optional[Dict] 추가
+   - after_state: Optional[Dict] 추가
+   - trace_id: str 추가 (워크플로우 추적용)
+
+3. 새 이벤트 타입 추가:
+   - CHECKPOINT_CREATED
+   - CHECKPOINT_APPROVED
+   - CHECKPOINT_REJECTED
+   - CHECKPOINT_MODIFIED
+   - HUMAN_OVERRIDE
+   - AGENT_PAUSED
+   - AGENT_RESUMED
+   - AGENT_CANCELLED
+   - AGENT_ROLLBACK
+   - ESCALATION_TRIGGERED
+   - ESCALATION_RESOLVED
+
+4. 새 메서드 추가:
+   - log_checkpoint_event(checkpoint: Checkpoint, action: str, actor_id: str)
+   - log_human_decision(checkpoint_id, decision, actor_id, before, after, reason)
+   - log_agent_control(execution_id, action, actor_id, reason)
+   - get_decision_trail(decision_id) -> List[AuditEvent]
+   - generate_human_intervention_report(project_id, start_date, end_date) -> Dict
+   - generate_compliance_report(project_id) -> Dict
+
+5. 저장소:
+   - SQLite에 저장
+   - 인덱스: project_id, timestamp, event_type, actor_id
+
+[참고]
+- 기존 로깅 시스템과 호환성 유지
+- 민감 정보 필터링
+- 대용량 로그 처리 대비 (pagination)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 11: WebSocket 실시간 업데이트 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 WebSocket 기반 실시간 업데이트를 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/api/hitl_websocket.py
+2. FastAPI WebSocket 사용
+3. WebSocket 엔드포인트:
+   ws://localhost:8002/api/v1/hitl/ws/projects/{project_id}
+
+4. 이벤트 타입:
+   - checkpoint_created: 새 체크포인트 생성
+   - checkpoint_updated: 체크포인트 상태 변경
+   - task_created: 새 작업 생성
+   - task_assigned: 작업 할당됨
+   - agent_status_changed: 에이전트 상태 변경
+   - escalation_triggered: 에스컬레이션 발생
+   - notification: 일반 알림
+
+5. ConnectionManager 클래스:
+   - connect(websocket, project_id, user_id)
+   - disconnect(websocket)
+   - broadcast_to_project(project_id, message)
+   - send_to_user(user_id, message)
+
+6. 이벤트 발행:
+   - CheckpointManager, TaskQueue 등에서 이벤트 발행
+   - Event bus 패턴 사용 (간단한 pub/sub)
+
+7. Frontend (hitl_dashboard.html):
+   - WebSocket 연결 설정
+   - 메시지 수신 시 UI 업데이트
+   - 재연결 로직
+
+[참고]
+- FastAPI WebSocket 공식 문서 참고
+- 연결 관리, 에러 핸들링
+- Heartbeat (30초마다 ping)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 12: Explainability Engine 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 AI 의사결정 설명 생성 엔진을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/explainability_engine.py
+2. 다음 클래스들을 구현:
+   - DecisionExplanation (Pydantic Model)
+   - ExplainabilityEngine (Manager class)
+
+3. ExplainabilityEngine는 다음 메서드 포함:
+   - generate_explanation(checkpoint: Checkpoint, agent_output: Dict) -> DecisionExplanation
+   - explain_decision(decision_id) -> DecisionExplanation
+   - get_key_factors(agent_output: Dict) -> List[Dict]
+   - generate_alternatives(context: Dict, agent_output: Dict) -> List[Dict]
+   - calculate_confidence_breakdown(agent_output: Dict) -> Dict[str, float]
+   - get_data_sources(context: Dict) -> List[str]
+   - identify_assumptions(agent_output: Dict) -> List[str]
+
+4. LLM 기반 설명 생성:
+   - Ollama 사용 (기존 llm_provider 재사용)
+   - Prompt Template:
+     """
+     다음 AI 에이전트의 결정을 설명해주세요:
+
+     [Context]
+     {context}
+
+     [Agent Output]
+     {agent_output}
+
+     [Confidence Score]
+     {confidence}
+
+     다음 형식으로 설명해주세요:
+     1. 결정 요약 (2-3문장)
+     2. 추론 단계 (step-by-step)
+     3. 주요 영향 요인 (top 5)
+     4. 고려된 대안들
+     5. 이 결정을 선택한 이유
+     6. 가정 및 한계점
+     """
+
+5. Frontend 통합:
+   - Approval Modal에 "Explain Decision" 탭 추가
+   - 설명 내용을 사용자 친화적으로 표시
+
+[참고]
+- Ollama 모델: llama3.1:8b 사용
+- 설명 생성 시간: 5-10초 예상
+- 캐싱: 동일 checkpoint는 캐시된 설명 재사용
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 13: Notification System 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 알림 시스템을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/notification_service.py
+2. 다음 클래스들을 구현:
+   - NotificationChannel (Enum): email, slack, ui, sms
+   - NotificationType (Enum): task_assigned, deadline_approaching, escalation, approval_required
+   - Notification (Pydantic Model)
+   - NotificationService (Manager class)
+
+3. NotificationService는 다음 메서드 포함:
+   - send_notification(user_id, notification_type, title, message, channels, data)
+   - send_task_assigned(task: HumanTask)
+   - send_deadline_approaching(task: HumanTask, hours_remaining: int)
+   - send_escalation_alert(escalation: EscalationCase)
+   - send_approval_required(checkpoint: Checkpoint)
+   - get_user_notifications(user_id, unread_only: bool) -> List[Notification]
+   - mark_as_read(notification_id)
+
+4. 채널별 구현:
+   - UI: in-app 알림 (데이터베이스에 저장)
+   - Email: SMTP 사용 (설정: config/settings.py)
+   - Slack: Webhook URL 사용
+   - SMS: 일단 스킵 (TODO)
+
+5. 알림 템플릿:
+   - 각 notification_type별 템플릿 정의
+   - 변수 치환: {user_name}, {task_title}, {deadline}, etc.
+
+6. API 엔드포인트:
+   GET /api/v1/hitl/notifications
+   GET /api/v1/hitl/notifications/unread-count
+   POST /api/v1/hitl/notifications/{notification_id}/read
+
+7. Frontend:
+   - 헤더에 알림 벨 아이콘
+   - 읽지 않은 알림 개수 뱃지
+   - 드롭다운으로 최근 알림 표시
+
+[참고]
+- 비동기 처리: 알림 발송은 백그라운드에서
+- 실패 재시도 로직
+- 사용자 알림 설정 (선호 채널, 빈도)
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 14: Timeout & Auto-escalation 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 타임아웃 및 자동 에스컬레이션 스케줄러를 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/scheduler.py
+2. APScheduler 사용
+3. 정기 실행 작업:
+
+   a) check_checkpoint_timeouts (매 5분)
+      - 마감 시간이 지난 체크포인트 조회
+      - timeout_action에 따라 처리:
+         auto_approve: 자동 승인
+         escalate: 상위 권한자에게 에스컬레이션
+         reject: 자동 거부
+
+   b) check_task_deadlines (매 10분)
+      - 마감 임박 작업 (1시간 이내) 조회
+      - 담당자에게 알림 발송
+
+   c) auto_escalate_overdue_tasks (매 30분)
+      - 마감 시간 초과 작업 조회
+      - 자동 에스컬레이션
+
+   d) cleanup_old_data (매일 자정)
+      - 완료된 checkpoint/task 30일 지난 것 아카이브
+
+4. HITLScheduler 클래스:
+   - start()
+   - stop()
+   - add_job(func, trigger, args)
+   - list_jobs()
+
+5. main.py 통합:
+   @app.on_event("startup")
+   async def startup():
+       scheduler = get_hitl_scheduler()
+       scheduler.start()
+
+[참고]
+- APScheduler 공식 문서 참고
+- 스케줄러 실패 시 재시도
+- 로깅: 모든 자동 작업 감사 로그 기록
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 15: Compliance Report 구현
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트에 Compliance Report 생성 기능을 구현해주세요.
+
+[구현 요구사항]
+1. 파일 위치: src/hitl/compliance_report.py
+2. ComplianceReportGenerator 클래스 구현
+3. 보고서 종류:
+
+   a) Decision Trail Report
+      - 특정 checkpoint의 전체 의사결정 과정 추적
+      - 시간순으로 모든 이벤트 나열
+      - 누가, 언제, 무엇을, 왜 했는지
+
+   b) Human Intervention Report
+      - 프로젝트의 모든 인간 개입 통계
+      - 개입 빈도, 유형별 분포
+      - 에이전트별 승인/거부율
+      - 평균 검토 시간
+
+   c) Compliance Report
+      - 필수 승인 절차 이행 여부
+      - 규정 위반 사항 (timeout, 승인 누락 등)
+      - 감사 로그 무결성 검증
+
+   d) Agent Performance Report
+      - 에이전트별 성공률
+      - 인간 수정 빈도
+      - 신뢰도 트렌드
+      - 개선 필요 영역
+
+4. 보고서 포맷:
+   - JSON (API 응답)
+   - HTML (웹 뷰)
+   - PDF (다운로드)
+   - CSV (데이터 분석용)
+
+5. API 엔드포인트:
+   GET /api/v1/hitl/reports/decision-trail/{checkpoint_id}
+   GET /api/v1/hitl/reports/human-interventions?project_id=&start_date=&end_date=
+   GET /api/v1/hitl/reports/compliance?project_id=
+   GET /api/v1/hitl/reports/agent-performance?project_id=&agent_id=
+
+6. Frontend:
+   - 보고서 페이지 (templates/hitl_reports.html)
+   - 필터 및 날짜 범위 선택
+   - 차트 및 테이블로 시각화
+   - PDF 다운로드 버튼
+
+[참고]
+- 기존 report_generator.py 참고
+- reportlab으로 PDF 생성
+- Pandas로 데이터 집계
+"""
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# PROMPT 16: 통합 테스트 및 문서화
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+ai_consulting 프로젝트의 HITL 시스템 통합 테스트 및 문서화를 완료해주세요.
+
+[구현 요구사항]
+1. 통합 테스트 (tests/integration/test_hitl_workflow.py):
+   - 전체 HITL 워크플로우 end-to-end 테스트
+   - 시나리오:
+      프로젝트 생성
+      성숙도 진단 → Checkpoint 생성
+      인간 승인 → 진행
+      기회 발굴 → Checkpoint 생성
+      거부 → Agent 재실행
+      승인 → 다음 단계
+      타임아웃 → 자동 에스컬레이션
+      에스컬레이션 해결
+      프로젝트 완료
+
+2. API 테스트 (tests/api/test_hitl_endpoints.py):
+   - 모든 HITL API 엔드포인트 테스트
+   - 정상 케이스 + 에러 케이스
+   - 권한 테스트 (role-based)
+
+3. 문서화:
+   a) docs/HITL_USER_GUIDE.md
+      - HITL 시스템 사용법
+      - 화면별 기능 설명
+      - 승인 절차 가이드
+      - FAQ
+
+   b) docs/HITL_DEVELOPER_GUIDE.md
+      - 아키텍처 설명
+      - 주요 컴포넌트
+      - 확장 방법
+      - API 레퍼런스
+
+   c) docs/HITL_DEPLOYMENT.md
+      - 설치 및 설정
+      - 의존성
+      - 환경 변수
+      - 프로덕션 체크리스트
+
+4. README.md 업데이트:
+   - HITL 기능 소개
+   - Quick Start 가이드
+   - 스크린샷
+
+[참고]
+- pytest 사용
+- API 문서는 Swagger에서 자동 생성
+- Markdown 형식
+- 다이어그램 추가 (Mermaid)
+"""
+
+
+================================================================================
+12. 추가 고려사항
+================================================================================
+
+[보안 (Security)]
+- RBAC (Role-Based Access Control): 역할별 권한 관리
+- 데이터 암호화: 민감 정보 암호화 저장
+- Audit Log 무결성: 변조 방지 (Hash chain)
+- API 인증: JWT 기반 토큰 인증
+- Rate Limiting: API 남용 방지
+
+[성능 (Performance)]
+- Redis Caching: 자주 조회되는 데이터 캐싱
+- Database Indexing: 주요 쿼리 인덱스
+- Async Processing: 무거운 작업은 비동기
+- Pagination: 대량 데이터 페이징 처리
+- WebSocket Connection Pool: 연결 재사용
+
+[확장성 (Scalability)]
+- Microservices: HITL을 별도 서비스로 분리 가능
+- Message Queue: Celery + Redis로 분산 처리
+- Load Balancing: 다중 인스턴스 지원
+- Database Sharding: 프로젝트별 샤딩
+- Horizontal Scaling: Stateless 설계
+
+[모니터링 (Monitoring)]
+- Metrics: 체크포인트 처리 시간, 승인율, 에스컬레이션율
+- Alerting: 임계치 초과 시 알림
+- Logging: 구조화된 로그 (JSON)
+- Tracing: 분산 추적 (OpenTelemetry)
+- Dashboard: Grafana 대시보드
+
+
+================================================================================
+13. 성공 지표 (Success Metrics)
+================================================================================
+
+[HITL 시스템 효과성]
+1. Human Intervention Rate: 인간 개입 비율 (Target: 20-30%)
+2. Approval Rate: 에이전트 제안 승인율 (Target: >70%)
+3. Average Review Time: 평균 검토 시간 (Target: <2 hours)
+4. Escalation Rate: 에스컬레이션 비율 (Target: <10%)
+5. Override Rate: 인간 수정 비율 (Target: <20%)
+
+[시스템 품질]
+1. Audit Coverage: 감사 로그 커버리지 (Target: 100%)
+2. Decision Traceability: 의사결정 추적 가능성 (Target: 100%)
+3. Response Time: API 응답 시간 (Target: <500ms)
+4. Uptime: 시스템 가동률 (Target: >99.9%)
+5. User Satisfaction: 사용자 만족도 (Target: >4/5)
+
+[비즈니스 영향]
+1. Consultant Productivity: 컨설턴트 생산성 향상 (Target: +50%)
+2. Project Completion Time: 프로젝트 완료 시간 단축 (Target: -30%)
+3. Quality Score: 컨설팅 품질 점수 (Target: >4/5)
+4. Client Satisfaction: 고객 만족도 (Target: >4.5/5)
+5. Compliance Rate: 규정 준수율 (Target: 100%)
+
+
+================================================================================
+14. 구현 우선순위
+================================================================================
+
+[P0 - Must Have (MVP)]
+✓ Checkpoint System (제어 포인트)
+✓ Human Task Queue (작업 큐)
+✓ Approval Workflow (기본 승인)
+✓ HITL API (핵심 API)
+✓ Basic Dashboard UI (대시보드)
+✓ Audit Trail (감사 로그)
+
+[P1 - Should Have (Phase 2)]
+✓ Agent Pause/Resume (에이전트 제어)
+✓ WebSocket Real-time (실시간 업데이트)
+✓ Escalation Manager (에스컬레이션)
+✓ Explainability (설명 가능성)
+✓ Notification System (알림)
+
+[P2 - Nice to Have (Phase 3)]
+✓ Advanced Workflows (복잡한 워크플로우)
+✓ Rollback (되돌리기)
+✓ Compliance Reports (규정 준수 보고서)
+✓ Performance Metrics (성능 지표)
+✓ Mobile Support (모바일 지원)
+
+[P3 - Future]
+○ External Integrations (Jira, Slack, Teams)
+○ ML-based Auto-approval (ML 기반 자동 승인)
+○ Voice Assistant (음성 인터페이스)
+○ Advanced Analytics (고급 분석)
+
+
+================================================================================
+15. 참고 자료
+================================================================================
+
+[논문 & 자료]
+- "Human-in-the-Loop Machine Learning" (Monarch et al., 2021)
+- "Interactive Machine Learning: Experimental Evidence" (Fails et al., 2003)
+- LangGraph Documentation: https://langchain-ai.github.io/langgraph/
+- FastAPI WebSockets: https://fastapi.tiangolo.com/advanced/websockets/
+
+[오픈소스 프로젝트]
+- Label Studio: https://github.com/heartexlabs/label-studio
+- Prodigy: https://prodi.gy/
+- Human-in-the-Loop for AutoML: https://github.com/AutoML
+
+[디자인 패턴]
+- Approval Workflow Pattern
+- Checkpoint Pattern (LangGraph)
+- Event-Driven Architecture
+- CQRS (Command Query Responsibility Segregation)
+
+
+================================================================================
+문서 끝
+================================================================================
+
+이 문서를 기반으로 HITL 아키텍처를 단계별로 구현할 수 있습니다.
+각 프롬프트를 순서대로 AI 코딩 도우미에게 제공하면,
+완전한 Human-in-the-Loop 시스템을 구축할 수 있습니다.
+
+작성자: 100K-AX Expert Platform Development Team
+최종 수정: 2025-12-11
+Update Date: Dec. 16, 2025
+버전: 1.1
+Editor: Brian Lee / WDLAB AI/ML/AX Group
+
+질문이나 피드백: hitl-feedback@example.com

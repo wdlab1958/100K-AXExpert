@@ -1,0 +1,1398 @@
+/**
+ * 100K-AX Expert Platform - Project Manager Styles
+ * 프로젝트 관리 및 워크플로우 UI 스타일
+ */
+
+/* =====================================================
+   Toast Notifications
+   ===================================================== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast-notification {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: toastSlideIn 0.3s ease;
+    min-width: 300px;
+    max-width: 450px;
+}
+
+.toast-notification.toast-success {
+    border-left: 4px solid var(--brand-secondary);
+}
+
+.toast-notification.toast-success i {
+    color: var(--brand-secondary);
+}
+
+.toast-notification.toast-error {
+    border-left: 4px solid var(--brand-danger);
+}
+
+.toast-notification.toast-error i {
+    color: var(--brand-danger);
+}
+
+.toast-notification.toast-warning {
+    border-left: 4px solid var(--brand-warning);
+}
+
+.toast-notification.toast-warning i {
+    color: var(--brand-warning);
+}
+
+.toast-notification.toast-info {
+    border-left: 4px solid var(--brand-primary);
+}
+
+.toast-notification.toast-info i {
+    color: var(--brand-primary);
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    margin-left: auto;
+    padding: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.toast-close:hover {
+    color: var(--text-primary);
+}
+
+.toast-fade-out {
+    animation: toastFadeOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* =====================================================
+   Project Selector Header
+   ===================================================== */
+.project-selector-wrapper {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.project-selector-wrapper .form-select {
+    background: var(--bg-secondary);
+    max-width: 300px;
+}
+
+.project-selector-wrapper .btn-group {
+    margin-left: auto;
+}
+
+/* Current Project Display */
+#currentProjectDisplay {
+    padding: 8px 16px;
+    background: rgba(79, 145, 255, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(79, 145, 255, 0.2);
+}
+
+/* =====================================================
+   Project List Table
+   ===================================================== */
+.project-list-container {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+}
+
+.project-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.project-list-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.project-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(79, 145, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =====================================================
+   Workflow Progress Panel
+   ===================================================== */
+.workflow-progress-panel {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.workflow-progress-panel h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.workflow-stage-item {
+    padding: 8px 0;
+}
+
+.workflow-stage-item .progress {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+/* =====================================================
+   Save/Load Action Buttons
+   ===================================================== */
+.stage-actions {
+    display: flex;
+    gap: 8px;
+    padding: 16px 0;
+    border-top: 1px solid var(--glass-border);
+    margin-top: 20px;
+}
+
+.stage-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-save {
+    background: var(--brand-primary);
+    color: white;
+}
+
+.btn-save:hover {
+    background: #3d7ce6;
+    box-shadow: var(--glow-primary);
+}
+
+.btn-load {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+
+.btn-load:hover {
+    background: var(--glass-hover);
+    color: var(--text-primary);
+}
+
+.btn-analyze {
+    background: var(--brand-accent);
+    color: white;
+}
+
+.btn-analyze:hover {
+    background: #7c3aed;
+    box-shadow: var(--glow-accent);
+}
+
+/* =====================================================
+   Form Section Headers
+   ===================================================== */
+.form-section {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.form-section-header h5 {
+    margin: 0;
+    color: var(--text-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section-header .badge {
+    font-size: 0.7rem;
+}
+
+/* =====================================================
+   Input Field Groups
+   ===================================================== */
+.input-group-custom {
+    margin-bottom: 16px;
+}
+
+.input-group-custom label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.input-group-custom .form-text {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+.input-group-custom .required-mark {
+    color: var(--brand-danger);
+    margin-left: 2px;
+}
+
+/* Score Input (1-5) */
+.score-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.score-input-group .form-range {
+    flex: 1;
+}
+
+.score-input-group .score-value {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--brand-primary);
+    background: rgba(79, 145, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* =====================================================
+   Dynamic List Items
+   ===================================================== */
+.dynamic-list-container {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.dynamic-list-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.dynamic-list-item:last-child {
+    margin-bottom: 0;
+}
+
+.dynamic-list-item .item-content {
+    flex: 1;
+}
+
+.dynamic-list-item .item-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.add-item-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed var(--glass-border);
+    background: transparent;
+    color: var(--text-tertiary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.add-item-btn:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background: rgba(79, 145, 255, 0.05);
+}
+
+/* =====================================================
+   Stage Status Indicators
+   ===================================================== */
+.stage-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.stage-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+}
+
+.stage-status-dot.saved {
+    background: var(--brand-secondary);
+    box-shadow: 0 0 8px var(--brand-secondary);
+}
+
+.stage-status-dot.modified {
+    background: var(--brand-warning);
+    animation: pulse 2s infinite;
+}
+
+.stage-status-dot.error {
+    background: var(--brand-danger);
+}
+
+/* =====================================================
+   Maturity Score Grid
+   ===================================================== */
+.maturity-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 992px) {
+    .maturity-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.maturity-area {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid var(--glass-border);
+}
+
+.maturity-area-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.maturity-area-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.maturity-area-icon.strategy {
+    background: rgba(79, 145, 255, 0.15);
+    color: var(--brand-primary);
+}
+
+.maturity-area-icon.organization {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--brand-secondary);
+}
+
+.maturity-area-icon.technology {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--brand-accent);
+}
+
+.maturity-area-icon.process {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--brand-warning);
+}
+
+.maturity-area-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.maturity-item {
+    margin-bottom: 12px;
+}
+
+.maturity-item:last-child {
+    margin-bottom: 0;
+}
+
+.maturity-item label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+/* =====================================================
+   Opportunity Cards
+   ===================================================== */
+.opportunity-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.opportunity-card:hover {
+    border-color: var(--brand-primary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.opportunity-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.opportunity-priority {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.opportunity-priority.quick-win {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--brand-secondary);
+}
+
+.opportunity-priority.strategic {
+    background: rgba(79, 145, 255, 0.15);
+    color: var(--brand-primary);
+}
+
+.opportunity-priority.fill-in {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--brand-warning);
+}
+
+.opportunity-priority.reconsider {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--brand-danger);
+}
+
+/* =====================================================
+   Phase Timeline
+   ===================================================== */
+.phase-timeline {
+    position: relative;
+    padding-left: 24px;
+}
+
+.phase-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--glass-border);
+}
+
+.phase-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.phase-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    border: 2px solid var(--bg-primary);
+}
+
+.phase-item.completed::before {
+    background: var(--brand-secondary);
+}
+
+/* =====================================================
+   Quick Actions Bar
+   ===================================================== */
+.quick-actions-bar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 1000;
+}
+
+.quick-action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.quick-action-btn.save-all {
+    background: var(--brand-primary);
+    color: white;
+}
+
+.quick-action-btn.save-all:hover {
+    transform: scale(1.1);
+    box-shadow: var(--glow-primary);
+}
+
+.quick-action-btn.generate-report {
+    background: var(--brand-secondary);
+    color: white;
+}
+
+.quick-action-btn.generate-report:hover {
+    transform: scale(1.1);
+    box-shadow: var(--glow-success);
+}
+
+/* =====================================================
+   Scenario Generator Form
+   ===================================================== */
+.scenario-params-form {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.weight-slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.weight-slider-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.weight-slider-group .slider-with-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.weight-slider-group .weight-value {
+    min-width: 50px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* =====================================================
+   Report Generation Panel
+   ===================================================== */
+.report-options-panel {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--glass-border);
+}
+
+.report-type-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.report-type-option {
+    padding: 16px;
+    border: 2px solid var(--glass-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.report-type-option:hover {
+    border-color: var(--brand-primary);
+}
+
+.report-type-option.selected {
+    border-color: var(--brand-primary);
+    background: rgba(79, 145, 255, 0.1);
+}
+
+.report-type-option i {
+    font-size: 2rem;
+    color: var(--brand-primary);
+    margin-bottom: 8px;
+}
+
+.report-type-option .title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.report-type-option .desc {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+/* =====================================================
+   Completion Status Cards
+   ===================================================== */
+.completion-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.completion-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+}
+
+.completion-card.complete {
+    border-color: var(--brand-secondary);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.completion-card .icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.completion-card.complete .icon {
+    color: var(--brand-secondary);
+}
+
+.completion-card .label {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.completion-card .status {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+/* =====================================================
+   Auto-save Indicator
+   ===================================================== */
+.auto-save-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    padding: 4px 10px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+
+.auto-save-indicator.saving {
+    color: var(--brand-warning);
+}
+
+.auto-save-indicator.saved {
+    color: var(--brand-secondary);
+}
+
+.auto-save-indicator i {
+    font-size: 0.8rem;
+}
+
+/* =====================================================
+   Responsive Adjustments
+   ===================================================== */
+@media (max-width: 768px) {
+    .project-selector-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .project-selector-wrapper .form-select {
+        max-width: 100%;
+    }
+
+    .project-selector-wrapper .btn-group {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .stage-actions {
+        flex-wrap: wrap;
+    }
+
+    .stage-actions .btn {
+        flex: 1 1 calc(50% - 4px);
+    }
+
+    .quick-actions-bar {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .quick-action-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .completion-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =====================================================
+   Scenario Analysis Results
+   ===================================================== */
+.scenario-summary {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.scenario-summary h5 {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+#scenarioResultModal .card {
+    background: var(--bg-tertiary);
+    border-color: var(--glass-border);
+    transition: all 0.2s ease;
+}
+
+#scenarioResultModal .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+#scenarioResultModal .card-header {
+    background: var(--bg-secondary);
+    border-bottom-color: var(--glass-border);
+}
+
+#scenarioResultModal .card-body {
+    color: var(--text-secondary);
+}
+
+#scenarioResultModal .card-body strong {
+    color: var(--text-primary);
+}
+
+#scenarioResultModal .card-footer {
+    background: transparent;
+    border-top-color: var(--glass-border);
+}
+
+/* =====================================================
+   Report Results Display
+   ===================================================== */
+.report-header {
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--glass-border);
+}
+
+.report-section {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.report-section h5 {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.report-section .section-content {
+    color: var(--text-secondary);
+}
+
+.report-section .section-content strong {
+    color: var(--text-primary);
+}
+
+#reportResultModal .modal-body {
+    background: var(--bg-primary);
+}
+
+/* =====================================================
+   Loading States
+   ===================================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.loading-overlay.hidden {
+    display: none;
+}
+
+.loading-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: var(--brand-primary);
+}
+
+.loading-overlay #loadingMessage {
+    margin-top: 16px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+/* =====================================================
+   Project Creation Form
+   ===================================================== */
+.new-project-form {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--glass-border);
+}
+
+.new-project-form .form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.new-project-form .form-control {
+    background: var(--bg-secondary);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+.new-project-form .form-control:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(79, 145, 255, 0.2);
+}
+
+/* =====================================================
+   Stage Header Action Buttons
+   ===================================================== */
+.stage-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stage-header-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.stage-header-actions .btn i {
+    margin-right: 4px;
+}
+
+/* =====================================================
+   Data Validation Indicators
+   ===================================================== */
+.validation-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.validation-indicator.valid {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--brand-secondary);
+}
+
+.validation-indicator.invalid {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--brand-danger);
+}
+
+.validation-indicator.incomplete {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--brand-warning);
+}
+
+/* =====================================================
+   ISO 24030 Assessment Styles
+   ===================================================== */
+
+/* Report Type Card Selection */
+.report-type-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--glass-border);
+}
+
+.report-type-card:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+}
+
+.report-type-card.active {
+    border-color: var(--brand-primary);
+    background: rgba(79, 145, 255, 0.1);
+}
+
+/* Report Preview */
+.report-preview {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+}
+
+.report-preview h3,
+.report-preview h5 {
+    color: var(--text-primary);
+}
+
+/* Risk Matrix Cell Hover */
+#page-risk-assessment-matrix table td {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#page-risk-assessment-matrix table td:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Maturity Survey Button Groups */
+.maturity-survey-item + label {
+    transition: all 0.2s ease;
+}
+
+.maturity-survey-item:checked + label {
+    background: var(--brand-primary) !important;
+    color: white !important;
+    border-color: var(--brand-primary) !important;
+}
+
+/* Roadmap Timeline Cards */
+#page-improvement-roadmap .card.bg-warning.bg-opacity-25,
+#page-improvement-roadmap .card.bg-info.bg-opacity-25,
+#page-improvement-roadmap .card.bg-success.bg-opacity-25 {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--glass-border);
+}
+
+#page-improvement-roadmap .card.bg-warning.bg-opacity-25 .card-header {
+    background: rgba(245, 158, 11, 0.2);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+#page-improvement-roadmap .card.bg-info.bg-opacity-25 .card-header {
+    background: rgba(6, 182, 212, 0.2);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+#page-improvement-roadmap .card.bg-success.bg-opacity-25 .card-header {
+    background: rgba(16, 185, 129, 0.2);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+/* Fairness Metrics Progress Bars */
+#page-fairness-dashboard .progress {
+    background: var(--bg-secondary);
+}
+
+/* Governance Checklist Items */
+.gov-check + label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.gov-check:checked + label strong {
+    color: var(--brand-secondary);
+}
+
+/* Bias Type Table */
+#biasTypeTable td,
+#biasTypeTable th {
+    vertical-align: middle;
+}
+
+/* AI System Inventory Table */
+#aiSystemInventoryTable tr {
+    transition: all 0.2s ease;
+}
+
+#aiSystemInventoryTable tr:hover {
+    background: var(--glass-hover);
+}
+
+/* Assessment Dashboard Quick Access Buttons */
+#page-assessment-dashboard .btn-outline-primary,
+#page-assessment-dashboard .btn-outline-success,
+#page-assessment-dashboard .btn-outline-warning,
+#page-assessment-dashboard .btn-outline-info,
+#page-assessment-dashboard .btn-outline-secondary,
+#page-assessment-dashboard .btn-outline-danger {
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+
+#page-assessment-dashboard .btn-outline-primary:hover,
+#page-assessment-dashboard .btn-outline-success:hover,
+#page-assessment-dashboard .btn-outline-warning:hover,
+#page-assessment-dashboard .btn-outline-info:hover,
+#page-assessment-dashboard .btn-outline-secondary:hover,
+#page-assessment-dashboard .btn-outline-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Survey Progress Bar */
+#page-maturity-survey .progress {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#page-maturity-survey .progress-bar {
+    background: linear-gradient(90deg, var(--brand-primary), var(--brand-accent));
+    transition: width 0.5s ease;
+}
+
+/* Assessment Type Cards */
+#page-assessment-dashboard .card.bg-light {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--glass-border);
+}
+
+#page-assessment-dashboard .card.bg-light i {
+    opacity: 0.8;
+}
+
+#page-assessment-dashboard .card.bg-light h6 {
+    color: var(--text-primary);
+}
+
+/* Risk Assessment Category Cards */
+#page-risk-assessment-matrix .card-header.bg-primary,
+#page-risk-assessment-matrix .card-header.bg-warning,
+#page-risk-assessment-matrix .card-header.bg-danger,
+#page-risk-assessment-matrix .card-header.bg-secondary {
+    border-bottom: none;
+}
+
+/* Governance Checklist Section Headers */
+#page-governance-checklist .card-header {
+    border-bottom: none;
+}
+
+/* Report Generation Export Buttons */
+#page-assessment-report .btn-outline-secondary {
+    border-color: var(--glass-border);
+    color: var(--text-secondary);
+}
+
+#page-assessment-report .btn-outline-secondary:hover {
+    background: var(--glass-hover);
+    border-color: var(--text-tertiary);
+    color: var(--text-primary);
+}
+
+/* ===============================================
+   ISO 38500 IT Governance Styles
+   =============================================== */
+
+/* EDM Cycle Boxes */
+#page-edm-cycle .edm-box {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#page-edm-cycle .edm-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* IT Governance Dashboard */
+#page-it-governance-dashboard .card.border-primary {
+    border-width: 2px !important;
+}
+
+#page-it-governance-dashboard .card.border-success {
+    border-width: 2px !important;
+}
+
+#page-it-governance-dashboard .card.border-warning {
+    border-width: 2px !important;
+}
+
+/* Six Principles Cards */
+#page-six-principles .card {
+    transition: all 0.3s ease;
+}
+
+#page-six-principles .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+#page-six-principles .form-check {
+    padding: 8px 8px 8px 32px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+#page-six-principles .form-check:hover {
+    background-color: var(--glass-hover);
+}
+
+/* RACI Matrix */
+#page-raci-matrix .table th,
+#page-raci-matrix .table td {
+    padding: 12px;
+}
+
+#page-raci-matrix .badge {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+}
+
+/* AI Portfolio Cards */
+#page-ai-portfolio .card.bg-primary,
+#page-ai-portfolio .card.bg-success,
+#page-ai-portfolio .card.bg-info,
+#page-ai-portfolio .card.bg-warning {
+    transition: all 0.3s ease;
+}
+
+#page-ai-portfolio .card.bg-primary:hover,
+#page-ai-portfolio .card.bg-success:hover,
+#page-ai-portfolio .card.bg-info:hover,
+#page-ai-portfolio .card.bg-warning:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Executive Dashboard */
+#page-executive-dashboard .list-group-item {
+    background: var(--bg-tertiary);
+    border-color: var(--glass-border);
+    transition: all 0.2s ease;
+}
+
+#page-executive-dashboard .list-group-item:hover {
+    background: var(--glass-hover);
+}
+
+/* Governance Maturity Level Indicators */
+#page-governance-maturity .display-1 {
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#page-governance-maturity .border-start {
+    transition: all 0.3s ease;
+}
+
+#page-governance-maturity .border-start:hover {
+    padding-left: 20px !important;
+}
+
+/* Maturity Select Styling */
+#page-governance-maturity .maturity-select {
+    background: var(--bg-secondary);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+#page-governance-maturity .maturity-select:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Quick Access Buttons for IT Governance */
+#page-it-governance-dashboard .btn-outline-primary,
+#page-it-governance-dashboard .btn-outline-success,
+#page-it-governance-dashboard .btn-outline-warning,
+#page-it-governance-dashboard .btn-outline-info {
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+
+#page-it-governance-dashboard .btn-outline-primary:hover,
+#page-it-governance-dashboard .btn-outline-success:hover,
+#page-it-governance-dashboard .btn-outline-warning:hover,
+#page-it-governance-dashboard .btn-outline-info:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* EDM Check Labels */
+#page-edm-cycle .form-check-label {
+    width: 100%;
+}
+
+#page-edm-cycle .form-check-label p {
+    margin-top: 4px;
+}
+
+/* Progress Bars in IT Governance Dashboard */
+#page-it-governance-dashboard .progress {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#page-it-governance-dashboard .progress-bar {
+    transition: width 0.5s ease;
+}
+
+/* =====================================================
+   AI Governance 7대 필수 구성요소 Styles
+   ===================================================== */
+
+/* 7대 필수 구성요소 카드 내부 스타일 (시인성 개선) */
+#page-governance-components .card .card-header.bg-light {
+    background: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+#page-governance-components .card .card-header.bg-light strong {
+    color: #ff6b4a;
+    background: #ff6b4a;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+#page-governance-components .card .card-body {
+    background: var(--bg-tertiary);
+}
+
+#page-governance-components .card .card-body p {
+    color: var(--text-secondary);
+}
+
+#page-governance-components .card .card-body .form-label {
+    color: var(--text-secondary);
+}
+
+#page-governance-components .card .card-body .form-select {
+    background: var(--bg-secondary);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+#page-governance-components .card .card-body .form-select:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(79, 145, 255, 0.2);
+}
+
+/* Rule 카드 border 색상별 헤더 스타일 */
+#page-governance-components .card.border-primary .card-header {
+    border-left: 3px solid var(--brand-primary);
+}
+
+#page-governance-components .card.border-success .card-header {
+    border-left: 3px solid var(--brand-secondary);
+}
+
+#page-governance-components .card.border-info .card-header {
+    border-left: 3px solid #06b6d4;
+}
+
+#page-governance-components .card.border-danger .card-header {
+    border-left: 3px solid var(--brand-danger);
+}
+
+#page-governance-components .card.border-secondary .card-header {
+    border-left: 3px solid #6b7280;
+}
+
+#page-governance-components .card.border-warning .card-header {
+    border-left: 3px solid var(--brand-warning);
+}

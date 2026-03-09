@@ -1,0 +1,9 @@
+{
+  "report_type": "security_scan",
+  "report_data": {
+    "title": "Test Security Report",
+    "content": "Security scan complete",
+    "date": "2026-02-17"
+  },
+  "saved_at": "2026-02-17T21:23:46.056074"
+}

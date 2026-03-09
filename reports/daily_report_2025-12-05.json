@@ -1,0 +1,16 @@
+{
+  "report_type": "daily",
+  "report_data": {
+    "date": "2025-12-05",
+    "summary": {
+      "total_events": 2,
+      "total_queries": 0,
+      "online_llm_calls": 0,
+      "security_warnings": 0,
+      "blocked_transmissions": 0
+    },
+    "alerts": [],
+    "generated_at": "2025-12-05T09:03:08.427633"
+  },
+  "saved_at": "2025-12-05T09:03:11.376791"
+}

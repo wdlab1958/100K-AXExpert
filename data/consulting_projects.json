@@ -1,0 +1,898 @@
+{
+  "projects": {
+    "sample-ea003046": {
+      "id": "sample-ea003046",
+      "created_at": "2026-03-09T16:07:59.668480",
+      "updated_at": "2026-03-09T16:07:59.668480",
+      "stage1_maturity": {
+        "assessment_date": "2026-03-09T16:07:59.668480",
+        "scores": {
+          "strategy": {
+            "score": 2.75,
+            "items": {
+              "ai_vision": 3,
+              "roadmap": 2,
+              "investment": 3,
+              "governance": 3
+            }
+          },
+          "organization": {
+            "score": 2.5,
+            "items": {
+              "leadership": 3,
+              "talent": 2,
+              "culture": 3,
+              "change_management": 2
+            }
+          },
+          "data_technology": {
+            "score": 3.0,
+            "items": {
+              "data_quality": 3,
+              "infrastructure": 3,
+              "tools": 3,
+              "security": 3
+            }
+          },
+          "process": {
+            "score": 2.5,
+            "items": {
+              "automation": 2,
+              "integration": 3,
+              "optimization": 3,
+              "monitoring": 2
+            }
+          }
+        },
+        "overall_score": 2.69,
+        "overall_level": 3,
+        "notes": "샘플 성숙도 진단 데이터입니다."
+      },
+      "stage1_opportunities": [
+        {
+          "id": "OPP-samp-001",
+          "name": "품질 예측 모델",
+          "description": "생산 라인 데이터를 활용한 불량품 예측 모델 구축",
+          "business_area": "생산/품질관리",
+          "priority_quadrant": "quick_win",
+          "expected_impact": "불량률 30% 감소, 원가 절감 5억원/년",
+          "implementation_difficulty": "중",
+          "estimated_timeline": "6개월",
+          "required_resources": "데이터 사이언티스트 2명, ML 엔지니어 1명",
+          "created_at": "2026-03-09T16:07:59.668480"
+        },
+        {
+          "id": "OPP-samp-002",
+          "name": "예측 유지보수 시스템",
+          "description": "IoT 센서 데이터 기반 설비 고장 예측 시스템",
+          "business_area": "설비관리",
+          "priority_quadrant": "strategic",
+          "expected_impact": "비계획 정지 50% 감소, 유지보수 비용 절감",
+          "implementation_difficulty": "높음",
+          "estimated_timeline": "12개월",
+          "required_resources": "데이터 엔지니어 2명, ML 엔지니어 2명",
+          "created_at": "2026-03-09T16:07:59.668480"
+        }
+      ],
+      "stage1_roadmap": {
+        "vision": "데이터 기반 스마트 제조 기업으로의 전환을 통해 경쟁력 강화 및 지속가능한 성장 실현",
+        "goals": [
+          {
+            "id": "goal-1",
+            "name": "품질 관리 자동화",
+            "target": "불량률 30% 감소",
+            "timeline": "6개월"
+          },
+          {
+            "id": "goal-2",
+            "name": "예측 유지보수 체계 구축",
+            "target": "비계획 정지 50% 감소",
+            "timeline": "12개월"
+          },
+          {
+            "id": "goal-3",
+            "name": "AI 조직 역량 강화",
+            "target": "AI 인력 10명 확보",
+            "timeline": "18개월"
+          }
+        ],
+        "kpis": [
+          {
+            "id": "kpi-1",
+            "name": "불량률",
+            "current": "2.5%",
+            "target": "1.75%",
+            "unit": "%"
+          },
+          {
+            "id": "kpi-2",
+            "name": "설비 가동률",
+            "current": "85%",
+            "target": "92%",
+            "unit": "%"
+          },
+          {
+            "id": "kpi-3",
+            "name": "AI 프로젝트 ROI",
+            "current": "-",
+            "target": "150%",
+            "unit": "%"
+          }
+        ],
+        "phases": [
+          {
+            "id": "phase-1",
+            "name": "1단계: 기초 구축 (0-6개월)",
+            "activities": [
+              "데이터 인프라 구축",
+              "품질 예측 모델 PoC",
+              "AI 조직 구성"
+            ],
+            "budget": "5억원"
+          },
+          {
+            "id": "phase-2",
+            "name": "2단계: 확장 (6-12개월)",
+            "activities": [
+              "예측 유지보수 시스템 구축",
+              "MLOps 플랫폼 도입",
+              "파일럿 확산"
+            ],
+            "budget": "8억원"
+          },
+          {
+            "id": "phase-3",
+            "name": "3단계: 최적화 (12-18개월)",
+            "activities": [
+              "전사 확산",
+              "고도화",
+              "지속적 개선"
+            ],
+            "budget": "7억원"
+          }
+        ],
+        "created_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage2_requirements": {
+        "use_case_name": "품질 예측 모델",
+        "business_requirements": "생산 라인에서 발생하는 불량품을 사전에 예측하여 원가 절감 및 고객 만족도 향상",
+        "functional_requirements": "실시간 생산 데이터 수집, 불량 예측 모델 실행, 알림 발송, 대시보드 제공",
+        "non_functional_requirements": "응답 시간 1초 이내, 가용성 99.5%, 확장성 확보",
+        "data_requirements": "생산 라인 센서 데이터, 품질 검사 데이터, 환경 데이터 (온도, 습도 등)",
+        "constraints": "기존 MES 시스템과의 통합 필요, 레거시 시스템 호환성 유지",
+        "success_criteria": "불량률 30% 감소, 모델 정확도 85% 이상, 사용자 만족도 4.0/5.0 이상",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage2_architecture": {
+        "data_architecture": {
+          "sources": "MES 시스템, SCADA 시스템, 품질관리시스템",
+          "storage": "AWS S3 데이터 레이크, Redshift 데이터 웨어하우스",
+          "pipeline": "Apache Airflow 기반 ETL 파이프라인"
+        },
+        "ml_architecture": {
+          "model_type": "Random Forest, XGBoost 앙상블 모델",
+          "training_platform": "AWS SageMaker",
+          "serving_method": "REST API (FastAPI), 실시간 추론"
+        },
+        "tech_stack": {
+          "cloud": "AWS (EC2, S3, SageMaker, RDS)",
+          "frameworks": "Scikit-learn, XGBoost, TensorFlow",
+          "tools": "MLflow, Airflow, Docker, Kubernetes"
+        },
+        "integration_points": "MES API, SCADA API, 알림 시스템 (Slack, 이메일)",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage2_governance": {
+        "privacy": {
+          "data_minimization": true,
+          "consent_management": true,
+          "anonymization": true,
+          "access_control": true
+        },
+        "ethics": {
+          "bias_testing": true,
+          "explainability": true,
+          "human_oversight": true,
+          "impact_assessment": true
+        },
+        "compliance": {
+          "gdpr": false,
+          "pipa": true,
+          "industry_specific": true,
+          "audit_trail": true
+        },
+        "notes": "개인정보는 포함되지 않으나, 생산 데이터 보안 관리 필요",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage3_poc": {
+        "poc_name": "품질 예측 모델 PoC",
+        "objectives": "생산 라인 1개에 대해 품질 예측 모델의 실현 가능성 검증",
+        "scope": "A 생산 라인, 주요 품목 3종, 3개월간 데이터 수집 및 모델 학습",
+        "success_metrics": "모델 정확도 80% 이상, 예측 시간 1초 이내, 불량 예측률 70% 이상",
+        "timeline": "3개월 (1개월: 데이터 수집, 1개월: 모델 개발, 1개월: 검증)",
+        "resources": "데이터 사이언티스트 1명, ML 엔지니어 1명, 인프라 엔지니어 1명",
+        "risks": "데이터 품질 이슈, 모델 성능 미달, 시스템 통합 난이도",
+        "status": "planned",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage3_platform": {
+        "components": {
+          "data_layer": true,
+          "feature_store": true,
+          "experiment_tracking": true,
+          "model_registry": true,
+          "training_pipeline": true,
+          "serving_infra": true,
+          "monitoring": true,
+          "cicd": true
+        },
+        "infrastructure": "AWS 기반 클라우드 인프라, Kubernetes 오케스트레이션",
+        "security_config": "VPC 격리, IAM 역할 기반 접근 제어, 암호화 (전송/저장)",
+        "scalability_plan": "Auto Scaling 그룹, 로드 밸런서, 다중 AZ 배포",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage3_integration": {
+        "target_systems": "MES 시스템, SCADA 시스템, 품질관리시스템, 알림 시스템",
+        "api_specifications": "RESTful API, JSON 형식, 인증: OAuth 2.0",
+        "data_flow": "MES/SCADA → 데이터 레이크 → Feature Store → 모델 서빙 → 알림 시스템",
+        "testing_plan": "단위 테스트, 통합 테스트, 성능 테스트, 사용자 수용 테스트",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage4_pilot": {
+        "poc_name": "품질 예측 모델 파일럿",
+        "target_department": "생산부, 품질관리부",
+        "pilot_scope": "A 생산 라인 전체, 주요 품목 5종, 6개월 운영",
+        "duration": "6",
+        "success_criteria": "불량률 25% 감소, 사용자 만족도 4.0/5.0 이상, 시스템 안정성 99% 이상",
+        "support_plan": "전담 지원팀 구성, 정기 교육, 피드백 수집 체계",
+        "status": "planned",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage4_change_management": {
+        "awareness": {
+          "communication_plan": true,
+          "stakeholder_engagement": true,
+          "vision_sharing": true
+        },
+        "capability": {
+          "training_program": true,
+          "skills_assessment": true,
+          "support_resources": true
+        },
+        "engagement": {
+          "feedback_mechanism": true,
+          "champion_program": true,
+          "incentives": true
+        },
+        "success_sharing": {
+          "success_stories": true,
+          "metrics_dashboard": true,
+          "recognition_program": true
+        },
+        "notes": "변화 관리 계획 수립 완료",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage4_scale": {
+        "rollout_phases": [
+          {
+            "phase": "1단계",
+            "scope": "A 생산 라인",
+            "timeline": "0-6개월"
+          },
+          {
+            "phase": "2단계",
+            "scope": "B, C 생산 라인",
+            "timeline": "6-12개월"
+          },
+          {
+            "phase": "3단계",
+            "scope": "전 생산 라인",
+            "timeline": "12-18개월"
+          }
+        ],
+        "target_coverage": "전 생산 라인 (100%)",
+        "timeline": "18개월",
+        "resource_plan": "인력 확충: 데이터 사이언티스트 3명, ML 엔지니어 2명, 인프라 엔지니어 2명",
+        "risk_mitigation": "단계별 롤아웃, 충분한 테스트, 피드백 반영",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage5_monitoring": {
+        "metrics": {
+          "model_performance": true,
+          "data_quality": true,
+          "system_health": true,
+          "business_kpis": true,
+          "user_satisfaction": true,
+          "drift_detection": true
+        },
+        "alert_thresholds": "모델 정확도 80% 미만, 데이터 드리프트 10% 이상, 시스템 응답 시간 2초 초과",
+        "dashboard_config": "Grafana 대시보드, 실시간 모니터링, 주간 리포트 자동 생성",
+        "reporting_frequency": "일일: 시스템 상태, 주간: 모델 성능, 월간: 비즈니스 KPI",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage5_improvement": {
+        "improvement_cycle": "분기별 개선 사이클 (3개월)",
+        "feedback_sources": "사용자 피드백, 모니터링 데이터, 비즈니스 KPI, A/B 테스트 결과",
+        "prioritization_criteria": "비즈니스 가치, 기술적 난이도, 리소스 가용성",
+        "experiment_framework": "MLflow 기반 실험 관리, A/B 테스트 프레임워크",
+        "success_metrics": "모델 정확도 향상, 사용자 만족도 향상, 비즈니스 KPI 달성",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "stage5_governance_review": {
+        "review_frequency": "분기별 정기 검토 (3개월)",
+        "review_scope": "모델 성능, 데이터 품질, 거버넌스 준수, 규제 변경사항",
+        "audit_checklist": "모델 편향성 검토, 데이터 보안 감사, 접근 권한 검토, 문서화 상태 확인",
+        "compliance_updates": "개인정보보호법, 산업 규제 변경사항 모니터링 및 반영",
+        "policy_revisions": "AI 윤리 정책, 데이터 사용 정책, 모델 배포 정책 정기 개정",
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "methodology_detailed_maturity": {
+        "assessment_date": "2026-03-09T16:07:59.668480",
+        "items": {
+          "strategy": {
+            "vision_clarity": 3,
+            "investment_mgmt": 3,
+            "portfolio_mgmt": 3,
+            "roi_measurement": 3
+          },
+          "organization": {
+            "dedicated_team": 3,
+            "talent_level": 3,
+            "training_program": 3,
+            "change_culture": 3
+          },
+          "data_technology": {
+            "infrastructure": 3,
+            "quality_governance": 3,
+            "mlops_level": 3,
+            "cloud_scalability": 3
+          },
+          "process": {
+            "methodology": 3,
+            "validation": 3,
+            "ethics_risk": 3,
+            "monitoring": 3
+          }
+        },
+        "scores": {
+          "strategy": 3.0,
+          "organization": 3.0,
+          "data_technology": 3.0,
+          "process": 3.0,
+          "overall": 3.0
+        },
+        "targets": {
+          "strategy": 4,
+          "organization": 4,
+          "data_technology": 4,
+          "process": 4
+        },
+        "gaps": {
+          "strategy": 1.0,
+          "organization": 1.0,
+          "data_technology": 1.0,
+          "process": 1.0
+        },
+        "notes": "샘플 상세 성숙도 평가 데이터"
+      },
+      "methodology_value_mapping": {
+        "created_at": "2026-03-09T16:07:59.668480",
+        "tasks": [
+          {
+            "id": "task-1",
+            "name": "품질 예측 모델",
+            "area": "production",
+            "description": "생산 라인 데이터 기반 불량품 예측",
+            "valueScore": 85,
+            "feasScore": 75,
+            "classification": "Quick Win",
+            "timeline": "6개월 이내"
+          },
+          {
+            "id": "task-2",
+            "name": "예측 유지보수 시스템",
+            "area": "maintenance",
+            "description": "IoT 센서 기반 설비 고장 예측",
+            "valueScore": 90,
+            "feasScore": 50,
+            "classification": "Strategic",
+            "timeline": "12개월 이내"
+          },
+          {
+            "id": "task-3",
+            "name": "자동화 품질 검사",
+            "area": "quality",
+            "description": "이미지 인식 기반 자동 품질 검사",
+            "valueScore": 70,
+            "feasScore": 80,
+            "classification": "Fill-in",
+            "timeline": "9개월 이내"
+          }
+        ],
+        "categories": {
+          "quick_win": [
+            {
+              "id": "task-1",
+              "name": "품질 예측 모델",
+              "area": "production",
+              "description": "생산 라인 데이터 기반 불량품 예측",
+              "valueScore": 85,
+              "feasScore": 75,
+              "classification": "Quick Win",
+              "timeline": "6개월 이내"
+            }
+          ],
+          "strategic": [
+            {
+              "id": "task-2",
+              "name": "예측 유지보수 시스템",
+              "area": "maintenance",
+              "description": "IoT 센서 기반 설비 고장 예측",
+              "valueScore": 90,
+              "feasScore": 50,
+              "classification": "Strategic",
+              "timeline": "12개월 이내"
+            }
+          ],
+          "fill_in": [
+            {
+              "id": "task-3",
+              "name": "자동화 품질 검사",
+              "area": "quality",
+              "description": "이미지 인식 기반 자동 품질 검사",
+              "valueScore": 70,
+              "feasScore": 80,
+              "classification": "Fill-in",
+              "timeline": "9개월 이내"
+            }
+          ],
+          "reconsider": []
+        },
+        "summary": {
+          "total": 3,
+          "quick_win": 1,
+          "strategic": 1,
+          "fill_in": 1,
+          "reconsider": 0
+        }
+      },
+      "governance_core_areas": {
+        "assessment_date": "2026-03-09T16:07:59.668480",
+        "areas": {
+          "strategy": {
+            "ethics": "implemented",
+            "data_policy": "approved"
+          },
+          "process": {
+            "dev_standard": "full",
+            "approval": "formal"
+          },
+          "technology": {
+            "mlops": "advanced",
+            "monitoring": "semi"
+          }
+        },
+        "scores": {
+          "strategy": 75.0,
+          "process": 75.0,
+          "technology": 62.5,
+          "overall": 70.8
+        },
+        "notes": {
+          "strategy": "윤리 원칙 전사 시행 중, 데이터 정책 승인 완료",
+          "process": "개발 프로세스 표준화 완료, 공식 승인 체계 구축",
+          "technology": "MLOps 고도화 진행 중, 모니터링 체계 구축"
+        }
+      },
+      "governance_components": {
+        "assessment_date": "2026-03-09T16:07:59.668480",
+        "components": {
+          "organization": {
+            "committee": "established",
+            "exec": "active",
+            "meeting": "monthly",
+            "steward": "full",
+            "ethics_officer": "active",
+            "validation": "formal",
+            "owner": "full"
+          },
+          "ethics": {
+            "bias": "all",
+            "fairness": "formal",
+            "doc": "full",
+            "xai": "standard",
+            "explain": "proactive",
+            "customer": "partial"
+          },
+          "data_management": {
+            "legal": "all",
+            "privacy": "full",
+            "consent": "system",
+            "metrics": "advanced",
+            "gate": "auto",
+            "improve": "formal"
+          },
+          "risk_management": {
+            "class": "detailed",
+            "verify": "tiered",
+            "period": "periodic",
+            "fallback": "all",
+            "hitl": "critical",
+            "drill": "regular"
+          },
+          "development": {
+            "model": "auto",
+            "data": "auto",
+            "code": "integrated",
+            "track": "full",
+            "env": "full",
+            "param": "auto",
+            "test": "regular"
+          },
+          "monitoring": {
+            "drift": "auto",
+            "decay": "realtime",
+            "alert": "integrated",
+            "retrain": "auto",
+            "vuln": "regular",
+            "pentest": "quarterly",
+            "audit": "full"
+          },
+          "training": {
+            "ethics": "mandatory",
+            "gov": "mandatory",
+            "track": "system",
+            "notify": "formal",
+            "confirm": "full",
+            "legal": "active"
+          }
+        },
+        "scores": {
+          "organization": 71.4,
+          "ethics": 75.0,
+          "data_management": 83.3,
+          "risk_management": 75.0,
+          "development": 92.9,
+          "monitoring": 92.9,
+          "training": 83.3
+        },
+        "overall_score": 82.0,
+        "grade": "양호 (Established)",
+        "recommendations": [
+          "[개선] 조직 및 책임 영역 개선 권장 (현재 71.4점)",
+          "[개선] 윤리 및 투명성 영역 개선 권장 (현재 75.0점)"
+        ]
+      },
+      "governance_assessment": {
+        "assessment_date": "2026-03-09T16:07:59.668480",
+        "overall_score": 82.0,
+        "overall_grade": "양호 (Established)",
+        "area_scores": {
+          "strategy": 75.0,
+          "process": 75.0,
+          "technology": 62.5
+        },
+        "component_scores": {
+          "organization": 71.4,
+          "ethics": 75.0,
+          "data_management": 83.3,
+          "risk_management": 75.0,
+          "development": 92.9,
+          "monitoring": 92.9,
+          "training": 83.3
+        },
+        "recommendations": [
+          "[개선] 조직 및 책임 영역 개선 권장 (현재 71.4점)",
+          "[개선] 윤리 및 투명성 영역 개선 권장 (현재 75.0점)",
+          "[개선] 기술 영역 개선 권장 (현재 62.5점)"
+        ]
+      },
+      "mlops_standards": {
+        "project_id": "sample-ea003046",
+        "data_management": {
+          "data_collection_api_type": "REST API, Kafka",
+          "data_lake_warehouse_type": "AWS S3, Redshift",
+          "data_pipeline_tool": "Apache Airflow",
+          "data_validation_enabled": true,
+          "schema_validation": true,
+          "statistical_validation": true,
+          "quality_threshold": 0.9,
+          "alert_on_failure": true,
+          "feature_store_enabled": true,
+          "feature_store_tool": "Feast",
+          "offline_online_consistency": true,
+          "data_versioning_enabled": true,
+          "dvc_tool": "DVC",
+          "implementation_status": "in_progress",
+          "notes": "데이터 관리 표준 구축 중"
+        },
+        "model_development": {
+          "containerized_environment": true,
+          "container_platform": "Docker, Kubernetes",
+          "standard_image_registry": "ECR",
+          "experiment_tracking_enabled": true,
+          "experiment_tracking_tool": "MLflow",
+          "auto_logging_params": true,
+          "auto_logging_metrics": true,
+          "auto_logging_artifacts": true,
+          "model_registry_enabled": true,
+          "model_registry_tool": "MLflow",
+          "model_metadata_tracking": true,
+          "hpo_enabled": true,
+          "hpo_tool": "Optuna",
+          "implementation_status": "in_progress",
+          "notes": "모델 개발 표준 구축 중"
+        },
+        "model_evaluation": {
+          "auto_evaluation_enabled": true,
+          "technical_metrics": [
+            "F1",
+            "AUC",
+            "Precision",
+            "Recall"
+          ],
+          "business_metrics": [
+            "ROI",
+            "Cost Reduction",
+            "Efficiency"
+          ],
+          "xai_enabled": true,
+          "xai_methods": [
+            "SHAP",
+            "LIME"
+          ],
+          "feature_importance_tracking": true,
+          "robustness_testing_enabled": true,
+          "edge_case_testing": true,
+          "ethics_risk_testing": true,
+          "deployment_gate_enabled": true,
+          "min_performance_threshold": {
+            "F1": 0.8,
+            "AUC": 0.85
+          },
+          "ethics_review_required": true,
+          "implementation_status": "in_progress",
+          "notes": "모델 평가 표준 구축 중"
+        },
+        "model_deployment": {
+          "cd_pipeline_enabled": true,
+          "cd_tool": "GitLab CI/CD",
+          "auto_deployment": true,
+          "api_type": "REST",
+          "api_gateway": "API Gateway",
+          "load_balancer": "ALB",
+          "deployment_strategy": "Canary",
+          "canary_percentage": 10.0,
+          "rollback_enabled": true,
+          "ab_testing_enabled": true,
+          "traffic_splitting_tool": "Istio",
+          "implementation_status": "in_progress",
+          "notes": "모델 배포 표준 구축 중"
+        },
+        "model_monitoring": {
+          "realtime_monitoring_enabled": true,
+          "latency_tracking": true,
+          "throughput_tracking": true,
+          "error_rate_tracking": true,
+          "accuracy_tracking": true,
+          "monitoring_tool": "Prometheus, Grafana",
+          "data_drift_detection": true,
+          "concept_drift_detection": true,
+          "drift_detection_tool": "Evidently",
+          "drift_threshold": 0.1,
+          "auto_retraining_enabled": true,
+          "retraining_trigger": "drift_threshold_exceeded",
+          "retraining_schedule": "monthly",
+          "feedback_loop_enabled": true,
+          "human_feedback_collection": true,
+          "prediction_logging": true,
+          "implementation_status": "in_progress",
+          "notes": "모델 모니터링 표준 구축 중"
+        },
+        "security_governance": {
+          "rbac_enabled": true,
+          "least_privilege_principle": true,
+          "access_control_tool": "IAM",
+          "audit_trail_enabled": true,
+          "audit_logging_scope": [
+            "model_access",
+            "data_access",
+            "deployment"
+          ],
+          "audit_retention_period": 365,
+          "code_security_scan": true,
+          "container_security_scan": true,
+          "security_scan_tool": "Trivy",
+          "cicd_integration": true,
+          "implementation_status": "in_progress",
+          "notes": "보안 및 거버넌스 표준 구축 중"
+        },
+        "overall_maturity_score": 75.0,
+        "recommendations": [
+          "데이터 관리 표준 완성도 향상",
+          "모델 개발 프로세스 자동화 강화",
+          "모니터링 체계 고도화"
+        ],
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "personnel_organization": {
+        "project_id": "sample-ea003046",
+        "strategy_pmo_team": {
+          "engagement_manager": {
+            "role_id": "em",
+            "role_name": "Engagement Manager",
+            "role_name_en": "Engagement Manager",
+            "category": "strategy_pmo",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          },
+          "ai_strategist": {
+            "role_id": "strategist",
+            "role_name": "AI 전략가",
+            "role_name_en": "AI Strategist",
+            "category": "strategy_pmo",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          },
+          "business_analyst": {
+            "role_id": "ba",
+            "role_name": "비즈니스 분석가",
+            "role_name_en": "Business Analyst",
+            "category": "strategy_pmo",
+            "current_headcount": 1,
+            "target_headcount": 2,
+            "gap": 1
+          }
+        },
+        "tech_development_team": {
+          "lead_data_scientist": {
+            "role_id": "lead_ds",
+            "role_name": "리드 데이터 사이언티스트",
+            "role_name_en": "Lead Data Scientist",
+            "category": "tech_dev",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          },
+          "ml_engineer": {
+            "role_id": "mle",
+            "role_name": "ML 엔지니어",
+            "role_name_en": "ML Engineer",
+            "category": "tech_dev",
+            "current_headcount": 1,
+            "target_headcount": 3,
+            "gap": 2
+          },
+          "software_engineer": {
+            "role_id": "swe",
+            "role_name": "소프트웨어 엔지니어",
+            "role_name_en": "Software Engineer",
+            "category": "tech_dev",
+            "current_headcount": 2,
+            "target_headcount": 3,
+            "gap": 1
+          }
+        },
+        "data_infra_team": {
+          "data_engineer": {
+            "role_id": "de",
+            "role_name": "데이터 엔지니어",
+            "role_name_en": "Data Engineer",
+            "category": "data_infra",
+            "current_headcount": 2,
+            "target_headcount": 3,
+            "gap": 1
+          },
+          "cloud_infra_architect": {
+            "role_id": "infra",
+            "role_name": "클라우드/인프라 아키텍트",
+            "role_name_en": "Cloud/Infra Architect",
+            "category": "data_infra",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          },
+          "data_steward": {
+            "role_id": "steward",
+            "role_name": "데이터 스튜어드/큐레이터",
+            "role_name_en": "Data Steward/Curator",
+            "category": "data_infra",
+            "current_headcount": 0,
+            "target_headcount": 1,
+            "gap": 1
+          }
+        },
+        "governance_expertise_team": {
+          "ai_ethics_officer": {
+            "role_id": "ethics",
+            "role_name": "AI 윤리 담당자",
+            "role_name_en": "AI Ethics Officer",
+            "category": "governance",
+            "current_headcount": 0,
+            "target_headcount": 1,
+            "gap": 1
+          },
+          "domain_expert": {
+            "role_id": "domain",
+            "role_name": "도메인 전문가",
+            "role_name_en": "Domain Expert",
+            "category": "governance",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          },
+          "qa_engineer": {
+            "role_id": "qa",
+            "role_name": "QA 엔지니어",
+            "role_name_en": "QA Engineer",
+            "category": "governance",
+            "current_headcount": 1,
+            "target_headcount": 1,
+            "gap": 0
+          }
+        },
+        "total_current_headcount": 12,
+        "total_target_headcount": 19,
+        "updated_at": "2026-03-09T16:07:59.668480"
+      },
+      "company_profile": {
+        "id": null,
+        "name": "테스트 제조기업 (주)",
+        "industry": "manufacturing",
+        "company_size": "midsize",
+        "business_description": "자동차 부품 제조 및 판매를 주력으로 하는 중견 제조기업입니다. AI를 활용한 품질 관리 및 예측 유지보수 시스템 도입을 검토 중입니다.",
+        "it_infrastructure": {
+          "has_cloud": true,
+          "cloud_provider": "AWS",
+          "has_data_warehouse": true,
+          "has_data_lake": false,
+          "server_count": 50,
+          "gpu_available": true,
+          "legacy_system_count": 5,
+          "api_capability": true,
+          "security_level": "standard"
+        },
+        "data_assets": {
+          "data_volume_tb": 25.5,
+          "structured_ratio": 0.7,
+          "data_quality_score": 3.5,
+          "has_data_governance": true,
+          "data_sources": [
+            "ERP",
+            "MES",
+            "SCADA",
+            "품질관리시스템"
+          ],
+          "historical_data_years": 5
+        },
+        "human_resources": {
+          "total_employees": 500,
+          "it_staff_count": 25,
+          "data_scientist_count": 2,
+          "ml_engineer_count": 1,
+          "data_engineer_count": 3,
+          "ai_experience_projects": 1,
+          "training_budget_ratio": 2.5
+        },
+        "financial_resources": {
+          "annual_revenue_billion": 150.0,
+          "it_budget_ratio": 5.0,
+          "ai_investment_budget": 10.0,
+          "roi_expectation_period": 24
+        },
+        "organizational_readiness": {
+          "executive_support": 4,
+          "change_management_capability": 3,
+          "innovation_culture": 3,
+          "cross_functional_collaboration": 3,
+          "risk_tolerance": 3
+        },
+        "created_at": "2026-03-09 16:07:59.668474",
+        "updated_at": null
+      },
+      "project_name": "샘플 프로젝트 - 테스트 제조기업 (주)"
+    }
+  }
+}

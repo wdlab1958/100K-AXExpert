@@ -1,0 +1,2 @@
+{"event_id": "5c19ff3afe440707", "event_type": "system_start", "severity": "info", "message": "AI Consulting Platform started", "details": {"version": "1.0.0"}, "user_id": "system", "session_id": "", "ip_address": "", "timestamp": "2026-02-08T03:03:31.557431"}
+{"event_id": "46ac8dd573a9f395", "event_type": "system_stop", "severity": "info", "message": "AI Consulting Platform stopped", "details": {}, "user_id": "system", "session_id": "", "ip_address": "", "timestamp": "2026-02-08T03:23:35.564723"}

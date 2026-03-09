@@ -1,0 +1,39 @@
+<div id="page-stage1" class="page-content page-wrapper hidden" data-stage="stage1">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><span class="badge bg-primary me-2">1단계</span> AI 비전 및 전략 수립</h2>
+            <p class="text-muted mb-0">고객사의 AI 도입 목표와 전사적 방향을 정의하고, AI가 비즈니스에 제공할 수 있는 최대 가치를 도출합니다.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="auto-save-indicator" id="stage1SaveIndicator">
+                <i class="bi bi-cloud-check"></i>
+                <span>자동 저장 활성</span>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="ProjectManager.loadStageData('stage1-maturity')">
+                <i class="bi bi-cloud-download me-1"></i>불러오기
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="saveStage1Data()">
+                <i class="bi bi-cloud-upload me-1"></i>저장
+            </button>
+        </div>
+    </div>
+
+    <!-- Stage 1 Tabs -->
+    <ul class="nav nav-tabs mb-4" id="stage1Tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab-maturity">AI 성숙도 진단</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-opportunity">기회 발굴</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-roadmap">전략 및 로드맵</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        {% include 'stage1/maturity.html' %}
+        {% include 'stage1/opportunities.html' %}
+        {% include 'stage1/roadmap.html' %}
+    </div>
+</div>

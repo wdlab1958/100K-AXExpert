@@ -1,0 +1,186 @@
+{
+  "test-u1": {
+    "user_id": "test-u1",
+    "user_name": "김테스트",
+    "company_id": "c1",
+    "company_name": "테스트기업",
+    "department": "품질관리부",
+    "domain": "manufacturing",
+    "current_level": "AX Beginner",
+    "total_tasks_completed": 1,
+    "roi_achieved_tasks": 1,
+    "dept_conversion_rate": 0.0,
+    "external_consulting": false,
+    "skill_radar": {
+      "ax_discovery": 2.0,
+      "roi_analysis": 0.5,
+      "risk_assessment": 0.5,
+      "implementation": 0.5,
+      "change_management": 0.5,
+      "report_generation": 0.5
+    },
+    "growth_history": [
+      {
+        "date": "2026-03-09",
+        "level": "AX Beginner",
+        "total_tasks": 0,
+        "roi_tasks": 0,
+        "skill_score": 0.0,
+        "event": "학습자 등록"
+      },
+      {
+        "date": "2026-03-09",
+        "level": "AX Beginner",
+        "total_tasks": 1,
+        "roi_tasks": 1,
+        "skill_score": 0.8,
+        "event": "과제 완료: AI 비전 검사 시스템"
+      }
+    ],
+    "badges": [
+      "first_task",
+      "roi_achiever"
+    ],
+    "tasks": [
+      {
+        "task_id": "9a0c4e7e",
+        "title": "AI 비전 검사 시스템",
+        "department": "품질관리부",
+        "description": "",
+        "domain": "manufacturing",
+        "dx_level_before": 0,
+        "dx_level_after": 3,
+        "status": "roi_achieved",
+        "roi_potential": 250.0,
+        "roi_achieved": 180.0,
+        "investment_cost": 25000.0,
+        "annual_saving": 0.0,
+        "complexity": "medium",
+        "started_at": "2026-03-09T15:37:19.716456",
+        "completed_at": "2026-03-09T15:37:19.718419",
+        "consulting_report_id": null
+      }
+    ],
+    "registered_at": "2026-03-09T15:37:19.716196",
+    "last_activity": "2026-03-09T15:37:19.718437"
+  },
+  "api-u1": {
+    "user_id": "api-u1",
+    "user_name": "이테스트",
+    "company_id": "api-c1",
+    "company_name": "API테스트기업",
+    "department": "품질관리부",
+    "domain": "manufacturing",
+    "current_level": "AX Beginner",
+    "total_tasks_completed": 0,
+    "roi_achieved_tasks": 0,
+    "dept_conversion_rate": 0.0,
+    "external_consulting": false,
+    "skill_radar": {
+      "ax_discovery": 0.0,
+      "roi_analysis": 0.0,
+      "risk_assessment": 0.0,
+      "implementation": 0.0,
+      "change_management": 0.0,
+      "report_generation": 0.0
+    },
+    "growth_history": [
+      {
+        "date": "2026-03-09",
+        "level": "AX Beginner",
+        "total_tasks": 0,
+        "roi_tasks": 0,
+        "skill_score": 0.0,
+        "event": "학습자 등록"
+      }
+    ],
+    "badges": [],
+    "tasks": [
+      {
+        "task_id": "b8ada22e",
+        "title": "AI 비전 검사 도입",
+        "department": "품질관리부",
+        "description": "",
+        "domain": "manufacturing",
+        "dx_level_before": 0,
+        "dx_level_after": null,
+        "status": "discovered",
+        "roi_potential": 0.0,
+        "roi_achieved": null,
+        "investment_cost": 0.0,
+        "annual_saving": 0.0,
+        "complexity": "medium",
+        "started_at": null,
+        "completed_at": null,
+        "consulting_report_id": null
+      }
+    ],
+    "registered_at": "2026-03-09T15:38:57.124116",
+    "last_activity": "2026-03-09T15:38:57.128850"
+  },
+  "test-user-002": {
+    "user_id": "test-user-002",
+    "user_name": "박테스트",
+    "company_id": "corp-002",
+    "company_name": "TestCorp2",
+    "department": "finance",
+    "domain": "finance",
+    "current_level": "AX Beginner",
+    "total_tasks_completed": 1,
+    "roi_achieved_tasks": 1,
+    "dept_conversion_rate": 0.0,
+    "external_consulting": false,
+    "skill_radar": {
+      "ax_discovery": 2.0,
+      "roi_analysis": 0.5,
+      "risk_assessment": 0.5,
+      "implementation": 0.5,
+      "change_management": 0.5,
+      "report_generation": 0.5
+    },
+    "growth_history": [
+      {
+        "date": "2026-03-09",
+        "level": "AX Beginner",
+        "total_tasks": 0,
+        "roi_tasks": 0,
+        "skill_score": 0.0,
+        "event": "학습자 등록"
+      },
+      {
+        "date": "2026-03-09",
+        "level": "AX Beginner",
+        "total_tasks": 1,
+        "roi_tasks": 1,
+        "skill_score": 0.8,
+        "event": "과제 완료: Risk Analysis AI"
+      }
+    ],
+    "badges": [
+      "first_task",
+      "roi_achiever"
+    ],
+    "tasks": [
+      {
+        "task_id": "c0d72db4",
+        "title": "Risk Analysis AI",
+        "department": "finance",
+        "description": "AI-based risk analysis system",
+        "domain": "finance",
+        "dx_level_before": 0,
+        "dx_level_after": 3,
+        "status": "roi_achieved",
+        "roi_potential": 25.0,
+        "roi_achieved": 20.0,
+        "investment_cost": 0.0,
+        "annual_saving": 0.0,
+        "complexity": "medium",
+        "started_at": "2026-03-09T16:08:06.146737",
+        "completed_at": "2026-03-09T16:08:06.147863",
+        "consulting_report_id": null
+      }
+    ],
+    "registered_at": "2026-03-09T16:03:12.989771",
+    "last_activity": "2026-03-09T16:08:06.147881"
+  }
+}
