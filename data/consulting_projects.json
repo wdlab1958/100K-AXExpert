@@ -3,7 +3,7 @@
     "sample-ea003046": {
       "id": "sample-ea003046",
       "created_at": "2026-03-09T16:07:59.668480",
-      "updated_at": "2026-03-09T16:07:59.668480",
+      "updated_at": "2026-03-10T00:26:39.041978",
       "stage1_maturity": {
         "assessment_date": "2026-03-09T16:07:59.668480",
         "scores": {
@@ -892,7 +892,74 @@
         "created_at": "2026-03-09 16:07:59.668474",
         "updated_at": null
       },
-      "project_name": "샘플 프로젝트 - 테스트 제조기업 (주)"
+      "project_name": "샘플 프로젝트 - 테스트 제조기업 (주)",
+      "scenario_analysis": {
+        "analysis_date": "2026-03-10T00:26:39.041732",
+        "stage_completion": {
+          "stage1": 0,
+          "stage2": 0,
+          "stage3": 0,
+          "stage4": 0,
+          "stage5": 0
+        },
+        "overall_completion": 0,
+        "selected_scenario": "balanced",
+        "scenario_details": {
+          "name": "균형 시나리오",
+          "roi_estimate": "25-40%",
+          "timeline": "18개월",
+          "risk_level": "중간",
+          "investment_ratio": 1.0,
+          "key_features": [
+            "최적화된 접근",
+            "균형잡힌 투자",
+            "적정 리스크"
+          ]
+        },
+        "all_scenarios": {
+          "conservative": {
+            "name": "보수적 시나리오",
+            "roi_estimate": "15-25%",
+            "timeline": "24개월",
+            "risk_level": "낮음",
+            "investment_ratio": 0.7,
+            "key_features": [
+              "안정적 도입",
+              "단계적 확장",
+              "리스크 최소화"
+            ]
+          },
+          "balanced": {
+            "name": "균형 시나리오",
+            "roi_estimate": "25-40%",
+            "timeline": "18개월",
+            "risk_level": "중간",
+            "investment_ratio": 1.0,
+            "key_features": [
+              "최적화된 접근",
+              "균형잡힌 투자",
+              "적정 리스크"
+            ]
+          },
+          "aggressive": {
+            "name": "적극적 시나리오",
+            "roi_estimate": "40-60%",
+            "timeline": "12개월",
+            "risk_level": "높음",
+            "investment_ratio": 1.5,
+            "key_features": [
+              "빠른 도입",
+              "대규모 투자",
+              "고위험 고수익"
+            ]
+          }
+        },
+        "recommendations": [
+          "현재 프로젝트 진행률을 고려하여 단계적 접근을 권장합니다.",
+          "핵심 인력 확보를 우선 진행하시기 바랍니다.",
+          "파일럿 프로젝트를 통한 검증 후 확대 적용을 권장합니다."
+        ]
+      }
     }
   }
 }
